@@ -13,12 +13,6 @@ use Phalcon\Mvc\Controller;
 
 class UserController extends Controller
 {
-    protected View $view;
-
-    public function onConstruct() {
-        $this->view = $this->di->get('view');
-    }
-
     public function indexAction()
     {
 
@@ -51,7 +45,7 @@ class UserController extends Controller
         }
 
         // TODO: Redirect to view
-        return $this->di->get('view');
+        return $this->view->pick('');
     }
 
     public function loginAction()
