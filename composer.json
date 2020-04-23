@@ -6,6 +6,7 @@
         "ramsey/uuid": "^4.0",
       "ext-http": "*",
         "vlucas/phpdotenv": "^4.1",
-      "ext-json": "*"
+      "ext-json": "*",
+      "ext-pdo": "*"
     }
 }
