@@ -55,7 +55,7 @@ $di->setShared('view', function () {
 
             return $volt;
         },
-        '.phtml' => PhpEngine::class
+//        '.phtml' => PhpEngine::class
 
     ]);
 

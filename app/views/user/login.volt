@@ -2,23 +2,6 @@
 
 
 {% block head %}
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css">
-    <!--===============================================================================================-->
-{#    <link rel="stylesheet" type="text/css" href="/css/login/util.css">#}
-{#    <link rel="stylesheet" type="text/css" href="/css/login/main.css">#}
     {{ assets.outputCss('headerCss') }}
 {% endblock %}
 
@@ -54,13 +37,13 @@
 							Forgot
 						</span>
 
-                        <a href="#" class="txt2">
+                        <a href="{{ url('user/forgot') }}" class="txt2">
                             User name / password?
                         </a>
                     </div>
 
                     <div class="w-full text-center">
-                        <a href="/user/register" class="txt3">
+                        <a href="{{ url('user/register')}}" class="txt3 mr-0">
                             Sign Up
                         </a>
                     </div>
