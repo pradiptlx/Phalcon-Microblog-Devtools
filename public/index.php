@@ -7,6 +7,7 @@ error_reporting(E_ALL);
 
 define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/app');
+require_once __DIR__.'/../vendor/autoload.php';
 
 try {
     /**
@@ -14,6 +15,9 @@ try {
      * the services that provide a full stack framework.
      */
     $di = new FactoryDefault();
+
+    $dotEnv = \Dotenv\Dotenv::createMutable(BASE_PATH);
+    $dotEnv->load();
 
     /**
      * Handle routes
