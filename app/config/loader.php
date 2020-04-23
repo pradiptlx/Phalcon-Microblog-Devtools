@@ -15,7 +15,7 @@ $loader->registerDirs(
 $loader->registerNamespaces([
     'Dex\Microblog\Models' => APP_PATH . '/models/',
     'Dex\Microblog\Controller' => APP_PATH . '/controllers/',
-    'Phalcon\Db' => APP_PATH . '/library/Db/'
+    'Phalcon\Db' => APP_PATH . '/library/Phalcon/Db/'
 ]);
 
 $loader->register();

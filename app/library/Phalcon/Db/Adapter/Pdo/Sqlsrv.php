@@ -18,9 +18,9 @@ use Phalcon\Db\Result\PdoSqlsrv as ResultPdo;
  * $connection = new \Phalcon\Db\Adapter\Pdo\Sqlsrv($config);
  * </code>.
  *
- * @property \Phalcon\Db\Dialect\Sqlsrv $_dialect
+ * @property \Phalcon\Db\Dialect\Sqlsrv $dialect
  */
-class Sqlsrv extends \Phalcon\Db\Adapter\Pdo\AbstractPdo
+class Sqlsrv extends AbstractPdo
 {
 
     protected $type = 'sqlsrv';
@@ -96,7 +96,11 @@ class Sqlsrv extends \Phalcon\Db\Adapter\Pdo\AbstractPdo
          * Get primary keys
          */
         $primaryKeys = array();
-        foreach ($this->fetchAll($this->_dialect->getPrimaryKey($table, $schema)) as $field) {
+//        print_r($this->dialect);
+//        die();
+//        print_r($this->fetchAll("exec sp_pkeys @table_name ='roles', @table_owner ='dbo'"));
+//        die();
+        foreach ($this->fetchAll($this->dialect->getPrimaryKey($table, $schema)) as $field) {
             $primaryKeys[$field['COLUMN_NAME']] = true;
         }
 
@@ -106,7 +110,7 @@ class Sqlsrv extends \Phalcon\Db\Adapter\Pdo\AbstractPdo
          * Get the describe
          * Field Indexes: 0:name, 1:type, 2:not null, 3:key, 4:default, 5:extra
          */
-        foreach ($this->fetchAll($this->_dialect->describeColumns($table, $schema)) as $field) {
+        foreach ($this->fetchAll($this->dialect->describeColumns($table, $schema)) as $field) {
             /*
              * By default the bind types is two
              */
