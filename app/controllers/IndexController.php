@@ -11,5 +11,9 @@ class IndexController extends ControllerBase
 
     }
 
+    public function fourOhFourAction(){
+        return $this->view->pick('fourohfour');
+    }
+
 }
 

@@ -1,6 +1,5 @@
 {% extends 'layouts/base.volt' %}
 
-{% block title %}{{title}}{% endblock %}
 
 {% block head %}
     <!--===============================================================================================-->
@@ -18,9 +17,12 @@
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/css/login/util.css">
-    <link rel="stylesheet" type="text/css" href="/css/login/main.css">
+{#    <link rel="stylesheet" type="text/css" href="/css/login/util.css">#}
+{#    <link rel="stylesheet" type="text/css" href="/css/login/main.css">#}
+    {{ assets.outputCss('headerCss') }}
 {% endblock %}
+
+{% block title %}{{title}}{% endblock %}
 
 {% block content %}
 
@@ -58,7 +60,7 @@
                     </div>
 
                     <div class="w-full text-center">
-                        <a href="#" class="txt3">
+                        <a href="/user/register" class="txt3">
                             Sign Up
                         </a>
                     </div>

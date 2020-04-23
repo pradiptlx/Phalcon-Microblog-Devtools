@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 use Phalcon\Escaper;
+use Phalcon\Events\Event;
+use Phalcon\Events\Manager;
 use Phalcon\Flash\Direct as Flash;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Mvc\View;
@@ -122,7 +124,7 @@ $di->setShared('session', function () {
 });
 
 /**
- * Add default namespace for controllers
+ * Add default configuration for router and dispatch manager
  */
 $di->setShared('dispatcher', function () {
     $dispatcher = new Phalcon\Mvc\Dispatcher();
@@ -130,5 +132,48 @@ $di->setShared('dispatcher', function () {
         'Dex\Microblog\Controller'
     );
 
+    $dispatcher->setDefaultController('post');
+    $dispatcher->setDefaultAction('index');
+
+    $eventManager = new Manager();
+    $eventManager->attach(
+        'dispatch:beforeException',
+        function (
+            Event $event,
+            $dispatcher,
+            Exception $exception
+        ) {
+            // Default error 404 page
+            if ($exception instanceof \Phalcon\Mvc\Dispatcher\Exception) {
+                $dispatcher->forward(
+                    [
+                        'controller' => 'index',
+                        'action' => 'fourOhFour',
+                    ]
+                );
+                return false;
+            }
+
+            return true;
+        }
+    );
+
+    $dispatcher->setEventsManager($eventManager);
     return $dispatcher;
 });
+
+/**
+ * Router
+ */
+$di->setShared('router', function () {
+    $router = new Phalcon\Mvc\Router(false);
+    $router->removeExtraSlashes(true);
+
+    return $router;
+});
+
+//$di->setShared('assets', function (){
+//    $asset = new \Phalcon\Assets\Asset(
+//        ''
+//    );
+//});
