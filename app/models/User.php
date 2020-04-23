@@ -14,7 +14,7 @@ class User extends Model
     public string $fullname;
     public string $email;
     public string $password;
-    public Role $role_id;
+    public string $role_id;
     public string $created_at;
     public string $updated_at;
 
@@ -25,6 +25,8 @@ class User extends Model
 
         $this->setSchema('dbo');
         $this->setSource('users');
+
+        $this->belongsTo('role_id', Role::class, 'id');
     }
 
     public function onConstruct()

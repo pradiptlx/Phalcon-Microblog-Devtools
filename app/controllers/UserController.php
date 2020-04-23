@@ -23,6 +23,7 @@ class UserController extends Controller
 
     public function registerAction()
     {
+        $this->view->title = "Test";
         $request = $this->request;
 
         if ($request->isPost()) {
@@ -34,22 +35,23 @@ class UserController extends Controller
 
             $user = new User();
 
-            $roleQuery = "SELECT id, rolename, permissions
+            $roleQuery = "SELECT id, role_name, permissions
                             FROM roles
-                            WHERE rolename=:rolename";
+                            WHERE role_name=:rolename";
             $result_role = $this->db->query($roleQuery, [
                 'rolename' => $rolename
             ]);
 
             $role = $result_role->fetch();
-            if(!isset($role)){
-                $roleModel = new Role();
+
+            $roleModel = new Role();
+            if (!$role) {
                 $roleModel->assign([
-                   'id' => Role::getRoleId($rolename),
-                   'rolename' => $rolename,
-                   'permissions' => Role::getPerms()
+                    'id' => Role::getRoleId($rolename),
+                    'role_name' => $rolename,
+                    'permissions' => Role::getPerms()
                 ]);
-                if(!$roleModel->create())
+                if (!$roleModel->create())
                     return new \Exception("Can't create new role");
             }
 
@@ -59,15 +61,16 @@ class UserController extends Controller
                 'username' => $username,
                 'fullname' => $fullname,
                 'email' => $email,
-                'password' => $password,
+                'password' => password_hash($password, PASSWORD_BCRYPT),
                 'role_id' => Role::getRoleId('admin'),
-                (new \DateTime())->format('Y-m-d H:i:s')
+                'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
+                'updated_at' => (new \DateTime())->format('Y-m-d H:i:s')
             ]);
 
             if ($user->create()) {
-               $this->flash->success("Registration success");
+                $this->flash->success("Registration success");
 
-               return $this->response->redirect('/home');
+                return $this->response->redirect('/home');
             }
 
         }
@@ -86,11 +89,21 @@ class UserController extends Controller
 
         if ($request->isPost()) {
             $username = $request->getPost('username', 'string');
-            $fullname = $request->getPost('fullname', 'string');
-            $email = $request->getPost('email', 'string');
             $password = $request->getPost('password', 'string');
 
-//            return $this->view->pick("user/login");
+            $user = User::findByUsername($username)->getFirst();
+
+            if ($this->checkingPassword($password, $user->password)) {
+                $this->flash->success("Login Success");
+                $this->di->setShared('user', $user);
+                $this->session->set('user_id', $user->id);
+
+                return $this->response->redirect('/home');
+            } else {
+                $this->flash->error("Login Failed");
+
+                return $this->view->pick('user/login');
+            }
         } else if ($request->isGet()) {
             $this->view->title = "Login page";
 
@@ -105,6 +118,12 @@ class UserController extends Controller
     public function forgotPasswordAction()
     {
         $request = $this->request;
+    }
+
+    private function checkingPassword(string $password, string $passwordDb): bool
+    {
+        return password_verify($password, $passwordDb);
+
     }
 
 }
