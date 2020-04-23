@@ -4,6 +4,8 @@
     },
     "require": {
         "ramsey/uuid": "^4.0",
-      "ext-http": "*"
+      "ext-http": "*",
+        "vlucas/phpdotenv": "^4.1",
+      "ext-json": "*"
     }
 }

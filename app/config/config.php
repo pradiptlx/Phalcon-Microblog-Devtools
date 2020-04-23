@@ -9,11 +9,11 @@ defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 
 return new \Phalcon\Config([
     'database' => [
-        'adapter'     => 'Mysql',
-        'host'        => 'localhost',
-        'username'    => 'laravel',
-        'password'    => 'Masukajagan',
-        'dbname'      => 'phalcon_microblogging',
+        'adapter'     => getenv('DB_ADAPTER'),
+        'host'        => getenv('DB_HOST'),
+        'username'    => getenv('DB_USERNAME'),
+        'password'    => getenv('DB_PASSWORD'),
+        'dbname'      => getenv('DB_NAME'),
         'charset'     => 'utf8',
     ],
     'application' => [
