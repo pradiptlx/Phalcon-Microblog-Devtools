@@ -9,10 +9,12 @@
 
 {% block content %}
 
+    {{ flash.output() }}
+
     <div class="limiter">
         <div class="container-login100">
             <div class="wrap-login100">
-                <form class="login100-form validate-form" method="post" action="/user/login">
+                <form class="login100-form validate-form" method="post" action="{{ url('/user/login') }}">
 					<span class="login100-form-title p-b-34">
 						Account Login
 					</span>

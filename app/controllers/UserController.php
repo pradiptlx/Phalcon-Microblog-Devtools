@@ -9,13 +9,22 @@ use Dex\Microblog\Models\RoleModel;
 use Dex\Microblog\Models\User;
 use Dex\Microblog\Models\UserId;
 use Dex\Microblog\Models\UserModel;
-use http\Exception\InvalidArgumentException;
-use Phalcon\Mvc\View;
+use Phalcon\Cli\Dispatcher;
 use Phalcon\Mvc\Controller;
 use Ramsey\Uuid\Uuid;
 
 class UserController extends Controller
 {
+
+    public function initialize()
+    {
+        if (is_null($this->router->getActionName())) {
+            $this->response->redirect('/user/login');
+        }
+
+
+    }
+
     public function indexAction()
     {
 
@@ -23,7 +32,7 @@ class UserController extends Controller
 
     public function registerAction()
     {
-        $this->view->title = "Test";
+        $this->view->title = "Register Account";
         $request = $this->request;
 
         if ($request->isPost()) {
@@ -95,10 +104,9 @@ class UserController extends Controller
 
             if ($this->checkingPassword($password, $user->password)) {
                 $this->flash->success("Login Success");
-                $this->di->setShared('user', $user);
                 $this->session->set('user_id', $user->id);
 
-                return $this->response->redirect('/home');
+                $this->response->redirect('/home');
             } else {
                 $this->flash->error("Login Failed");
 
@@ -108,11 +116,23 @@ class UserController extends Controller
             $this->view->title = "Login page";
 
 //            $this->view->start()->render('user','login');
-            $this->view->pick('layouts/base');
             $this->view->pick("user/login");
 //            $this->view->render('user', 'login');
         }
         new \Exception("Test");
+    }
+
+    public function logoutAction()
+    {
+        if ($this->di->has('user')) {
+            $this->di->remove('user');
+        }
+        if ($this->session->has('user_id')) {
+            $this->session->remove('user_id');
+        }
+
+        $this->flash->success("Successfully logout");
+        return $this->response->redirect('/user/login');
     }
 
     public function forgotPasswordAction()

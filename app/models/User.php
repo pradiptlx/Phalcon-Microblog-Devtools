@@ -27,6 +27,8 @@ class User extends Model
         $this->setSource('users');
 
         $this->belongsTo('role_id', Role::class, 'id');
+
+        $this->hasMany('id', Post::class, 'user_id');
     }
 
     public function onConstruct()

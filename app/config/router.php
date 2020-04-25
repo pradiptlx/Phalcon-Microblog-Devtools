@@ -7,6 +7,14 @@ use Phalcon\Mvc\Router;
  */
 $router = $di->getShared('router');
 
+$router->add(
+    '/home',
+    [
+        'controller' => 'post',
+        'action' => 'index'
+    ]
+);
+
 /**
  * USER
  */
@@ -29,18 +37,24 @@ $postRouter = new Router\Group([
 ]);
 $postRouter->setPrefix('/post');
 $postRouter->add(
+    '/',
+    [
+        'action' => 'index'
+    ]
+)->setName('home');
+$postRouter->add(
     '/createPost',
     [
         'action' => 'createPost'
     ]
 )->setName('create-post');
 $postRouter->add(
-    '/:params',
+    '/viewPost/:params',
     [
-        'action' => 'index',
+        'action' => 'viewPost',
         'params' => 1
     ]
-)->setName('get-post');
+)->setName('view-post');
 $postRouter->add(
     '/editPost/:params',
     [
@@ -49,7 +63,7 @@ $postRouter->add(
     ]
 )->setName('edit-post');
 $postRouter->add(
-    'deletePost/:params',
+    '/deletePost/:params',
     [
         'action' => 'deletePost',
         'params' => 1
