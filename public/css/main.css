@@ -104,14 +104,16 @@ img::-moz-selection {
     background: transparent;
 }
 
+/*
 #mainNav {
     position: absolute;
     border-bottom: 1px solid #e9ecef;
     background-color: white;
     font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
+*/
 
-#mainNav .navbar-brand {
+/*#mainNav .navbar-brand {
     font-weight: 800;
     color: #343a40;
 }
@@ -129,10 +131,10 @@ img::-moz-selection {
     font-weight: 800;
     letter-spacing: 1px;
     text-transform: uppercase;
-}
+}*/
 
 
-
+/*
 @media only screen and (min-width: 992px) {
     #mainNav {
         border-bottom: 1px solid transparent;
@@ -157,12 +159,12 @@ img::-moz-selection {
 @media only screen and (min-width: 992px) {
     #mainNav {
         transition: background-color 0.2s;
-        /* Force Hardware Acceleration in WebKit */
+        !* Force Hardware Acceleration in WebKit *!
         transform: translate3d(0, 0, 0);
         -webkit-backface-visibility: hidden;
     }
     #mainNav.is-fixed {
-        /* when the user scrolls down, we hide the header right above the viewport */
+        !* when the user scrolls down, we hide the header right above the viewport *!
         position: fixed;
         top: -67px;
         transition: transform 0.2s;
@@ -182,10 +184,10 @@ img::-moz-selection {
         color: #0085A1;
     }
     #mainNav.is-visible {
-        /* if the user changes the scrolling direction, we show the header */
+        !* if the user changes the scrolling direction, we show the header *!
         transform: translate3d(0, 100%, 0);
     }
-}
+}*/
 
 header.masthead {
     margin-bottom: 50px;
@@ -294,7 +296,7 @@ header.masthead .post-heading .meta a {
 }
 
 .post-preview > a > .post-title {
-    font-size: 30px;
+    /*font-size: 30px;*/
     margin-top: 30px;
     margin-bottom: 10px;
 }
@@ -305,7 +307,7 @@ header.masthead .post-heading .meta a {
 }
 
 .post-preview > .post-meta {
-    font-size: 18px;
+    /*font-size: 18px;*/
     font-style: italic;
     margin-top: 0;
     color: #868e96;
@@ -323,7 +325,7 @@ header.masthead .post-heading .meta a {
 
 @media only screen and (min-width: 768px) {
     .post-preview > a > .post-title {
-        font-size: 36px;
+        /*font-size: 36px;*/
     }
 }
 
@@ -400,7 +402,7 @@ footer .copyright {
     margin-bottom: 0;
     text-align: center;
 }
-
+/*
 .btn {
     font-size: 14px;
     font-weight: 800;
@@ -425,4 +427,4 @@ footer .copyright {
 .btn-lg {
     font-size: 16px;
     padding: 25px 35px;
-}
+}*/

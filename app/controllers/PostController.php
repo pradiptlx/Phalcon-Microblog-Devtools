@@ -5,10 +5,13 @@ namespace Dex\Microblog\Controller;
 
 use Dex\Microblog\Models\FileManager;
 use Dex\Microblog\Models\Post;
+use Dex\Microblog\Models\ReplyPost;
+use Phalcon\Db\Exception;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Query;
 use Phalcon\Mvc\Model\Transaction\Failed;
 use Phalcon\Mvc\Model\Transaction\Manager;
+use Ramsey\Uuid\Uuid;
 
 class PostController extends Controller
 {
@@ -30,22 +33,22 @@ class PostController extends Controller
         $this->view->title = "Home";
 
         //TODO: JOIN USER
-//        $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, p.repost_counter, p.share_counter, u.fullname
-//                    FROM posts p
-//                    JOIN users u on p.user_id = u.id";
-//
-//        $createQuery = new Query($query, $this->di);
-//
-//        $posts = $createQuery->execute();
-        $posts = Post::find();
+        $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, p.repost_counter, p.share_counter, u.fullname
+                    FROM Dex\Microblog\Models\Post p
+                    JOIN Dex\Microblog\Models\User u on p.user_id = u.id";
+
+        $createQuery = new Query($query, $this->di);
+
+        $posts = $createQuery->execute();
+//        $posts = Post::find();
 
         $urls = [];
 
-        foreach ($posts as $post){
+        foreach ($posts as $post) {
             $urls[] = $this->url->get([
-               'for' => 'view-post',
-               'title' => 'View Post',
-               'params' => $post->id
+                'for' => 'view-post',
+                'title' => 'View Post',
+                'params' => $post->id
             ]);
         }
         $this->view->setVar('posts', $posts);
@@ -101,6 +104,95 @@ class PostController extends Controller
 
         }
 
+    }
+
+    public function viewPostAction()
+    {
+        $request = $this->request;
+
+        $idPost = $this->router->getParams()[0];
+
+        if (isset($idPost)) {
+            if ($request->isGet()) {
+                $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, p.repost_counter, p.share_counter, u.fullname
+                FROM Dex\Microblog\Models\Post p
+                JOIN Dex\Microblog\Models\User u on p.user_id = u.id
+                WHERE p.id = :id:";
+                //TODO: Exception UUID not found -> some solution: hardcode parameter to use 16bytes GUID
+                $modelManager = $this->modelsManager->createQuery($query);
+                $post = $modelManager->execute(
+                    [
+                        'id' => $idPost
+                    ]
+                )->getFirst();
+
+                $this->view->setVar('title', $post->title);
+                $this->view->setVar('post', $post);
+
+                return $this->view->pick('post/viewPost');
+
+            } elseif ($request->isPost()) {
+                $content = $request->getPost('content', 'string');
+                $userId = $this->session->get('user_id');
+                // Reply
+                $this->db->begin();
+
+                $replyModel = new ReplyPost();
+                $replyModel->id = Uuid::uuid4()->toString();
+                $replyModel->content = $content;
+                $replyModel->user_id = $userId;
+                $replyModel->post_id = $idPost;
+
+                if (!$replyModel->save()) {
+                    $this->db->rollback();
+                    $this->flash->error("Failed to reply");
+                    return $this->response->redirect('/post/viewPost/' . $idPost);
+                }
+
+                $this->db->commit();
+                return $this->response->redirect('/post/viewPost/' . $idPost);
+            }
+        }
+
+        $this->dispatcher->forward([
+            'controller' => 'post',
+            'action' => 'index'
+        ]);
+    }
+
+    public function replyPostAction()
+    {
+        $request = $this->request;
+
+        if ($request->isPost()) {
+            $content = $request->getPost('content', 'string');
+            $postId = $this->router->getParams()[0];
+            $userId = $this->session->get('user_id');
+
+            if (isset($postId) && isset($userId)) {
+                $this->db->begin();
+                $replyModel = new ReplyPost();
+                $replyModel->id = Uuid::uuid4()->toString();
+                $replyModel->content = $content;
+                $replyModel->post_id = $postId;
+                $replyModel->user_id = $userId;
+                $replyModel->created_at = (new \DateTime())->format('Y-m-d H:i:s');
+                $replyModel->updated_at = (new \DateTime())->format('Y-m-d H:i:s');;
+
+                //TODO: Fix model event not work
+                if (!$replyModel->save()) {
+                    $this->db->rollback();
+                    $this->flash->error("Error Reply");
+                    return $this->response->redirect('/home');
+                }
+                $this->db->commit();
+            }
+
+        } else {
+            $this->flash->error("Doesn't Support GET Method");
+        }
+
+        return $this->response->redirect('/home');
     }
 
     private function initializeFileManager(array $file, $post_id)

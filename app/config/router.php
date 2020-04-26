@@ -69,6 +69,13 @@ $postRouter->add(
         'params' => 1
     ]
 )->setName('delete-post');
+$postRouter->add(
+    '/:params/replyPost',
+    [
+        'action' => 'replyPost',
+        'params' => 1
+    ]
+)->setName('reply-post');
 
 /**
  * File

@@ -18,6 +18,7 @@ class Post extends Model
     public string $created_at;
     public string $updated_at;
     public string $user_id;
+    public string $previous_post_id;
 
     public function initialize()
     {
