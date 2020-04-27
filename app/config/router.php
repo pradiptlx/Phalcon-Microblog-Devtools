@@ -28,6 +28,13 @@ $userRouter->add(
         'action' => 1
     ]
 );
+$userRouter->add(
+    '/:action',
+    [
+        'action' => 1,
+        'params' => 2
+    ]
+);
 
 /**
  * Post

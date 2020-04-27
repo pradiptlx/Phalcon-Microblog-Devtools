@@ -54,11 +54,6 @@ class UserController extends Controller
         $this->view->pick('user/dashboard');
     }
 
-    public function indexAction()
-    {
-
-    }
-
     public function registerAction()
     {
         $this->view->title = "Register Account";
@@ -182,12 +177,47 @@ class UserController extends Controller
 
                 $this->flash->success("Success change password");
                 return $this->response->redirect('/user/dashboard');
-            }else{
+            } else {
                 $this->flash->error("Can't change password");
 
                 return $this->response->redirect('/home');
             }
         }
+    }
+
+    public function accountSettingsAction()
+    {
+        $request = $this->request;
+
+        if ($request->isPost()) {
+            $username = $request->getPost('username', 'string');
+            $fullname = $request->getPost('fullname', 'string');
+            $email = $request->getPost('email', 'email');
+            $oldPass = $request->getPost('oldPassword', 'string');
+            $newPass = $request->getPost('newPassword', 'string');
+
+            $user = User::findFirstById($this->session->get('user_id'));
+            if (isset($username)){
+                $user->username = $username;
+            }
+            if(isset($fullname)){
+                $user->fullname = $fullname;
+            }
+            if(isset($email)){
+                $user->email = $email;
+            }
+            if(isset($newPass) && isset($oldPass) && $this->checkingPassword($oldPass, $user->password)){
+                $hashed = password_hash($newPass, PASSWORD_BCRYPT);
+                $user->password = (string)$hashed;
+            }
+
+            $user->updated_at = (new \DateTime())->format('Y-m-d H:i:s');
+            $user->update();
+            $this->flash->success("Success change password");
+            return $this->response->redirect('/user/dashboard');
+        }
+
+        return $this->response->redirect('/user/dashboard');
     }
 
     public function forgotPasswordAction()

@@ -31,7 +31,9 @@
                     <!-- SIDEBAR BUTTONS -->
                     <div class="profile-userbuttons">
                         {% if self === true %}
-                            <button type="button" href="{{ url('/user/logout') }}" class="btn btn-success btn-sm">Logout</button>
+                            <button type="button" href="{{ url('/user/logout') }}" class="btn btn-success btn-sm">
+                                Logout
+                            </button>
                             <button type="button" class="btn btn-danger btn-sm"
                                     data-toggle="modal" data-target="#resetPassModal">Change Password
                             </button>
@@ -54,13 +56,13 @@
                                                 <div class="form-group">
                                                     <label for="inputOldPassword">Old Password</label>
                                                     <input type="password" id="inputOldPassword"
-                                                           name="oldPassword">
+                                                           name="oldPassword" class="form-control">
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="inputNewPassword">New Password</label>
                                                     <input type="password" id="inputNewPassword"
-                                                           name="newPassword">
+                                                           name="newPassword" class="form-control">
                                                 </div>
 
                                             </div>
@@ -84,31 +86,25 @@
                     <div class="profile-usermenu">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="#" class="nav-link" id="homeLink">
                                     <i class="fas fa-home"></i>
                                     Overview
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="#account" class="nav-link" id="accountSettingsLink">
                                     <i class="fas fa-user-circle"></i>
                                     Account Settings
                                 </a>
                             </li>
 
-                            {#<li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fas fa-list-ul"></i>
-                                    Post
-                                </a>
-                            </li>#}
                         </ul>
                     </div>
                     <!-- END MENU -->
                 </div>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-9" id="home">
                 <div class="profile-content">
                     {% for post in posts %}
 
@@ -126,7 +122,72 @@
                     {% endfor %}
                 </div>
             </div>
+
+            <div class="col-md-9" id="account" hidden>
+                <div class="profile-content">
+                    <div class="card">
+                        <div class="card-header">Account Settings</div>
+                        <div class="card-body">
+                            <form action="{{ url('/user/accountSettings') }}" method="post">
+                                <div class="form-group">
+                                    <label for="usernameLabel">Username</label>
+                                    <input class="form-control" name="username" id="usernameLabel"
+                                           placeholder="{{ user.username }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="fullnameLabel">Full Name</label>
+                                    <input class="form-control" name="fullname" id="fullnameLabel"
+                                           placeholder="{{ user.fullname }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="emailLabel">Email address</label>
+                                    <input type="email" class="form-control" name="email" id="emailLabel"
+                                           placeholder="{{ user.email }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputOldPassword">Old Password</label>
+                                    <input type="password" id="inputOldPassword" class="form-control"
+                                           name="oldPassword">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputNewPassword">New Password</label>
+                                    <input type="password" id="inputNewPassword" class="form-control"
+                                           name="newPassword">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-sm">Change Profile</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        $(document).ready(() => {
+
+            let accSet = $('#accountSettingsLink');
+            let homeSet = $('#homeLink');
+
+            accSet.click(function () {
+                $('#home').attr('hidden', true);
+                $('#account').attr('hidden', false);
+            });
+
+            homeSet.click(function () {
+                $('#home').attr('hidden', false);
+                $('#account').attr('hidden', true);
+            });
+        });
+    </script>
 
 {% endblock %}
