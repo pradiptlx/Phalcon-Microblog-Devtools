@@ -95,7 +95,7 @@
                                     <div class="col-md-4">
                                         <img src="{{ static_url(files[index].path) }}"
                                              alt="{{ files[index].file_name }}" class="card-img"
-                                            />
+                                        />
                                     </div>
                                     <div class="col-md-8">
                                         <div class="card-body">
@@ -114,8 +114,16 @@
                                         <div class="card-footer">
                                             <button type="button" class="btn btn-sm"
                                                     id="replyButton" data-toggle="collapse"
-                                                    data-target="#replyForm_{{ post.id }}">Reply
+                                                    data-target="#replyForm_{{ post.id }}">
+                                                <i class="fas fa-reply"></i> Reply
                                             </button>
+
+                                            {% if repliesCounter[index] != 0 %}
+                                                <button type="button" class="btn float-right btn-secondary btn-sm">
+                                                    Replies <span class="badge badge-light">{{ repliesCounter[index] }}</span>
+                                                    <span class="sr-only">replies</span>
+                                                </button>
+                                            {% endif %}
 
                                             <div class="collapse" id="replyForm_{{ post.id }}">
                                                 <div class="card card-body" style="max-width: 475px">
@@ -125,7 +133,7 @@
                                                             <textarea maxlength="120" name="content"
                                                                       id="replyContent"
                                                                       placeholder="What's on your mind?"
-                                                            class="w-75"></textarea>
+                                                                      class="w-75"></textarea>
                                                         </div>
                                                         <button type="submit"
                                                                 class="btn btn-sm btn-secondary"
@@ -157,8 +165,16 @@
                                 <div class="card-footer">
                                     <button type="button" class="btn btn-sm"
                                             id="replyButton" data-toggle="collapse"
-                                            data-target="#replyForm_{{ post.id }}">Reply
+                                            data-target="#replyForm_{{ post.id }}">
+                                        <i class="fas fa-reply"></i> Reply
                                     </button>
+
+                                    {% if repliesCounter[index] != 0 %}
+                                        <button type="button" class="btn float-right btn-secondary btn-sm">
+                                            Replies <span class="badge badge-light">{{ repliesCounter[index] }}</span>
+                                            <span class="sr-only">replies</span>
+                                        </button>
+                                    {% endif %}
 
                                     <div class="collapse" id="replyForm_{{ post.id }}">
                                         <div class="card card-body">

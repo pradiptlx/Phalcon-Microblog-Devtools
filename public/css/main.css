@@ -2,7 +2,7 @@
 
 /*!
  * Start Bootstrap - Clean Blog v5.0.8 (https://startbootstrap.com/template-overviews/clean-blog)
- * Copyright 2013-2019 Start Bootstrap
+ * Copyright 2013-2019 Start Bootstrap, Dex
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-clean-blog/blob/master/LICENSE)
  */
 
@@ -415,6 +415,18 @@ footer .copyright {
     margin-bottom: 0;
     text-align: center;
 }
+
+.btn:focus {
+    outline: 0;
+    box-shadow: none;
+}
+
+.navbar {
+    font-size: initial;
+    color: black;
+    font-family: "Open Sans", serif;
+}
+
 /*
 .btn {
     font-size: 14px;

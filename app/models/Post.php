@@ -13,8 +13,9 @@ class Post extends Model
     public string $id;
     public string $title;
     public string $content;
-    public int $repostCounter;
-    public int $shareCounter;
+    public int $repost_counter;
+    public int $share_counter;
+    public int $reply_counter;
     public string $created_at;
     public string $updated_at;
     public string $user_id;
@@ -34,8 +35,13 @@ class Post extends Model
         $this->id = Uuid::uuid4()->toString();
     }
 
-    public function afterFetch(){
-        $this->created_at = (new \DateTime($this->created_at))->format(DateTimeInterface::COOKIE);
+    public function afterFetch()
+    {
+        $this->created_at = (new \DateTime())->format('Y-m-d H:i:s');
+    }
+
+    public function beforeUpdate(){
+        $this->updated_at = (new \DateTime())->format('Y-m-d H:i:s');
     }
 
     private function incRepostCounter(): int
@@ -46,6 +52,11 @@ class Post extends Model
     private function incShareCounter(): int
     {
         return $this->shareCounter++;
+    }
+
+    private function incReplyCounter(): int
+    {
+        return $this->reply_counter++;
     }
 
 }

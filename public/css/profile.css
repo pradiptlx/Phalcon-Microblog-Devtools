@@ -4,8 +4,16 @@ A component of Metronic Theme - #1 Selling Bootstrap 3 Admin Theme in Themefores
 Licensed under MIT
 ***/
 
+@import url('https://fonts.googleapis.com/css2?family=Lora&family=Open+Sans&display=swap');
+
 body {
     background: #F1F3FA;
+}
+
+.navbar, .navbar a {
+    font-size: initial;
+    color: black;
+    font-family: "Open Sans", serif;
 }
 
 /* Profile container */

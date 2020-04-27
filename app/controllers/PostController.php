@@ -33,7 +33,8 @@ class PostController extends Controller
         $this->view->title = "Home";
 
         //TODO: JOIN USER
-        $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, p.repost_counter, p.share_counter, u.fullname
+        $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, p.repost_counter, 
+                    p.share_counter, p.reply_counter, u.fullname
                     FROM Dex\Microblog\Models\Post p
                     JOIN Dex\Microblog\Models\User u on p.user_id = u.id";
 
@@ -60,15 +61,11 @@ class PostController extends Controller
             $files[] = $createQuery->execute([
                 'post_id' => $post->id
             ])->getFirst();
+
+            $repliesCounter[] = ReplyPost::findByPostId($post->id)->count();
         }
 
-//        foreach ($files as $file) {
-//            $data[] = $file;
-//        }
-//        var_dump($data);
-//        die();
-//        var_dump($files);
-//        die();
+        $this->view->setVar('repliesCounter', $repliesCounter);
         $this->view->setVar('files', $files);
         $this->view->setVar('posts', $posts);
         $this->view->setVar('links', $urls);
@@ -135,7 +132,7 @@ class PostController extends Controller
         if (isset($idPost)) {
             if ($request->isGet()) {
                 $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, 
-                p.repost_counter, p.share_counter, u.fullname
+                p.repost_counter, p.share_counter, p.reply_counter, u.fullname
                 FROM Dex\Microblog\Models\Post p
                 JOIN Dex\Microblog\Models\User u on p.user_id = u.id
                 WHERE p.id = :id:";
@@ -168,6 +165,11 @@ class PostController extends Controller
             } elseif ($request->isPost()) {
                 $content = $request->getPost('content', 'string');
                 $userId = $this->session->get('user_id');
+
+                $postModel = Post::findFirstById($idPost);
+                $postModel->replyCounter++;
+                $postModel->update();
+
                 // Reply
                 $this->db->begin();
 
@@ -204,6 +206,13 @@ class PostController extends Controller
             $userId = $this->session->get('user_id');
 
             if (isset($postId) && isset($userId)) {
+                $postModel = Post::findFirstById($postId);
+                $postModel->reply_counter++;
+                if (!$postModel->update()) {
+                    var_dump('Cant update post model');
+                    die();
+                }
+
                 $this->db->begin();
                 $replyModel = new ReplyPost();
                 $replyModel->id = Uuid::uuid4()->toString();
@@ -211,7 +220,7 @@ class PostController extends Controller
                 $replyModel->post_id = $postId;
                 $replyModel->user_id = $userId;
                 $replyModel->created_at = (new \DateTime())->format('Y-m-d H:i:s');
-                $replyModel->updated_at = (new \DateTime())->format('Y-m-d H:i:s');;
+                $replyModel->updated_at = (new \DateTime())->format('Y-m-d H:i:s');
 
                 //TODO: Fix model event not work
                 if (!$replyModel->save()) {
