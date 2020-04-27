@@ -7,6 +7,7 @@ use Dex\Microblog\Models\FileManager;
 use Dex\Microblog\Models\Post;
 use Dex\Microblog\Models\ReplyPost;
 use Phalcon\Db\Exception;
+use Phalcon\Http\Request\File;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Query;
 use Phalcon\Mvc\Model\Transaction\Failed;
@@ -29,7 +30,6 @@ class PostController extends Controller
 
     public function indexAction()
     {
-
         $this->view->title = "Home";
 
         //TODO: JOIN USER
@@ -42,6 +42,7 @@ class PostController extends Controller
         $posts = $createQuery->execute();
 //        $posts = Post::find();
 
+        $files = [];
         $urls = [];
 
         foreach ($posts as $post) {
@@ -50,7 +51,25 @@ class PostController extends Controller
                 'title' => 'View Post',
                 'params' => $post->id
             ]);
+
+            $query = "SELECT f.*
+                        FROM Dex\Microblog\Models\FileManager f
+                        WHERE f.post_id=:post_id:";
+            $createQuery = new Query($query, $this->di);
+
+            $files[] = $createQuery->execute([
+                'post_id' => $post->id
+            ])->getFirst();
         }
+
+//        foreach ($files as $file) {
+//            $data[] = $file;
+//        }
+//        var_dump($data);
+//        die();
+//        var_dump($files);
+//        die();
+        $this->view->setVar('files', $files);
         $this->view->setVar('posts', $posts);
         $this->view->setVar('links', $urls);
 
@@ -65,7 +84,7 @@ class PostController extends Controller
         if ($request->isPost()) {
             $title = $request->getPost('title', 'string');
             $content = $request->getPost('content', 'string');
-            $files = $request->getPost('files', 'array') ?: [];
+
             $user_id = $this->session->get('user_id');
 
             try {
@@ -77,12 +96,13 @@ class PostController extends Controller
                 $postModel->title = $title;
                 $postModel->content = $content;
 
-                if (isset($files)) {
+                if ($this->request->hasFiles()) {
+                    $files = $request->getUploadedFiles() ?: [];
                     foreach ($files as $file) {
-                        $this->initializeFileManager($file, $postModel->id);
-
+                        $this->initializeFileManager($file, $postModel->id, $user_id);
                     }
                 }
+
                 $postModel->user_id = $user_id;
                 $postModel->created_at = (new \DateTime('now'))->format('Y-m-d H:i:s');
                 $postModel->updated_at = (new \DateTime('now'))->format('Y-m-d H:i:s');
@@ -114,7 +134,8 @@ class PostController extends Controller
 
         if (isset($idPost)) {
             if ($request->isGet()) {
-                $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, p.repost_counter, p.share_counter, u.fullname
+                $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, 
+                p.repost_counter, p.share_counter, u.fullname
                 FROM Dex\Microblog\Models\Post p
                 JOIN Dex\Microblog\Models\User u on p.user_id = u.id
                 WHERE p.id = :id:";
@@ -126,6 +147,19 @@ class PostController extends Controller
                     ]
                 )->getFirst();
 
+                $replyQuery = "SELECT r.id as RepId, r.content as RepContent,
+                 r.user_id as RepUser, r.created_at as RepCreatedAt, u.fullname as RepFullname
+                FROM Dex\Microblog\Models\ReplyPost r
+                JOIN Dex\Microblog\Models\User u on r.user_id = u.id
+                WHERE r.post_id = :id:";
+                $modelManager = $this->modelsManager->createQuery($replyQuery);
+                $replies = $modelManager->execute([
+                    'id' => $idPost
+                ]);
+//                var_dump($replies);
+//                die();
+
+                $this->view->setVar('replies', $replies);
                 $this->view->setVar('title', $post->title);
                 $this->view->setVar('post', $post);
 
@@ -195,20 +229,34 @@ class PostController extends Controller
         return $this->response->redirect('/home');
     }
 
-    private function initializeFileManager(array $file, $post_id)
+    private function initializeFileManager(File $file, string $post_id, string $user_id)
     {
         $fileModel = new FileManager();
         try {
             $manager = new Manager();
             $trx = $manager->get();
 
-            $fileModel->file_name = $file['filename'];
-            $fileModel->path = '';
+            $this->url->setBasePath('/files/');
+            $path = $user_id . "/" . $post_id . "/" . $file->getName();
+            try {
+                if (!mkdir('files/' . $user_id . "/" . $post_id, 0755, true)) {
+                    throw new \Phalcon\Url\Exception("Failed to mkdir");
+                }
+                $file->moveTo('files/' . $path);
+            } catch (\Phalcon\Url\Exception $exception) {
+                var_dump($exception->getMessage());
+                die();
+            }
+
+            $fileModel->file_name = $file->getName();
+            $fileModel->path = "/files/" . $path;
             $fileModel->post_id = $post_id;
             if (!$fileModel->save()) {
                 $trx->rollback('Can not save file on file manager');
             } else {
                 $trx->commit();
+
+
             }
         } catch (Failed $exception) {
             $this->flash->error($exception->getMessage());

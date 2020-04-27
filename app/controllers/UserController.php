@@ -38,7 +38,7 @@ class UserController extends Controller
         if ($request->isPost()) {
             $username = $request->getPost('username', 'string');
             $fullname = $request->getPost('fullname', 'string');
-            $email = $request->getPost('email', 'string');
+            $email = $request->getPost('email', 'email');
             $password = $request->getPost('password', 'string');
             $rolename = $request->getPost('rolename', 'string') ?: 'admin';
 

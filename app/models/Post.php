@@ -26,6 +26,7 @@ class Post extends Model
         $this->setSource('posts');
 
         $this->belongsTo('user_id', User::class, 'id');
+        $this->hasMany('id', ReplyPost::class, 'post_id');
     }
 
     public function onConstruct()

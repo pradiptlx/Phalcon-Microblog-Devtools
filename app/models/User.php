@@ -29,6 +29,7 @@ class User extends Model
         $this->belongsTo('role_id', Role::class, 'id');
 
         $this->hasMany('id', Post::class, 'user_id');
+        $this->hasMany('id', ReplyPost::class, 'user_id');
     }
 
     public function onConstruct()

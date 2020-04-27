@@ -10,7 +10,7 @@ class ReplyPost extends Model
 {
     public string $id;
     public string $content;
-    public ?string $post_id;
+    public string $post_id;
     public string $user_id;
     public ?string $created_at = null;
     public ?string $updated_at = null;

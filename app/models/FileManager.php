@@ -17,7 +17,7 @@ class FileManager extends Model
     public function initialize()
     {
         $this->setSchema('dbo');
-        $this->setSource('file_manager');
+        $this->setSource('files_manager');
 
 
         $this->belongsTo('post_id', Post::class, 'id');
