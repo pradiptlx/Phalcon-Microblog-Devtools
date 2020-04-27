@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Dex\Microblog\Controller;
 
+use Dex\Microblog\Models\Post;
 use Dex\Microblog\Models\Role;
 use Dex\Microblog\Models\RoleId;
 use Dex\Microblog\Models\RoleModel;
@@ -23,6 +24,34 @@ class UserController extends Controller
         }
 
 
+    }
+
+    public function dashboardAction()
+    {
+        $dashboardCollection = $this->assets->collection('dashboardCss');
+        $dashboardCollection->addCss('/css/profile.css');
+
+        $user = User::query()
+            ->where('id=:id:')
+            ->bind([
+                'id' => $this->session->get('user_id')
+            ])
+            ->execute()->getFirst();
+
+        $userPosts = Post::query()
+            ->where('user_id=:user_id:')
+            ->bind(
+                [
+                    'user_id' => $this->session->get('user_id')
+                ]
+            )
+            ->execute();
+
+        $this->view->setVar('posts', $userPosts);
+        $this->view->setVar('self', true);
+        $this->view->setVar('user', $user);
+        $this->view->setVar('title', 'Dashboard');
+        $this->view->pick('user/dashboard');
     }
 
     public function indexAction()
@@ -133,6 +162,32 @@ class UserController extends Controller
 
         $this->flash->success("Successfully logout");
         return $this->response->redirect('/user/login');
+    }
+
+    public function resetPasswordAction()
+    {
+        $request = $this->request;
+
+        if ($request->isPost()) {
+            $oldPass = $request->getPost('oldPassword', 'string');
+            $newPass = $request->getPost('newPassword', 'string');
+
+            $user = User::findFirstById($this->session->get('user_id'));
+
+            if ($this->checkingPassword($oldPass, $user->password)) {
+                $hashed = password_hash($newPass, PASSWORD_BCRYPT);
+                $user->password = (string)$hashed;
+                $user->updated_at = (new \DateTime())->format('Y-m-d H:i:s');
+                $user->update();
+
+                $this->flash->success("Success change password");
+                return $this->response->redirect('/user/dashboard');
+            }else{
+                $this->flash->error("Can't change password");
+
+                return $this->response->redirect('/home');
+            }
+        }
     }
 
     public function forgotPasswordAction()

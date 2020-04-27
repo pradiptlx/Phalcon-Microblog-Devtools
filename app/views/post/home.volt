@@ -90,12 +90,12 @@
                 <div class="col-6 mx-auto">
                     <div class="post-preview">
                         {% if files[index].path is defined %}
-                            <div class="card my-2" style="max-width: 475px">
-                                <div class="row no-gutters">
+                            <div class="card my-2 no-gutters" style="max-width: 540px">
+                                <div class="row">
                                     <div class="col-md-4">
                                         <img src="{{ static_url(files[index].path) }}"
                                              alt="{{ files[index].file_name }}" class="card-img"
-                                             />
+                                            />
                                     </div>
                                     <div class="col-md-8">
                                         <div class="card-body">
