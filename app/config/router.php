@@ -77,10 +77,12 @@ $postRouter->add(
     ]
 )->setName('reply-post');
 $postRouter->add(
-    '/:idPost/replyPost/:idReply',
+    '/{postId}/replyPost/{replyId}/:params',
     [
-        'action' => 'reply',
-        'params' => [1, 2]
+        'action' => 'replyOfReply',
+        'postId' => 1,
+        'replyId' => 2,
+        'params' => 3
     ]
 )->setName('reply-reply');
 
@@ -90,7 +92,6 @@ $postRouter->add(
 $fileRouter = new Router\Group([
     'controller' => 'fileManager'
 ]);
-
 
 
 $router->mount($userRouter);

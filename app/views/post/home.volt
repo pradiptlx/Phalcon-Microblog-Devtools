@@ -46,7 +46,7 @@
                             <button id="buttonFile" type="button"
                                     class="btn btn-primary btn-sm float-right" data-toggle="modal"
                                     data-target="#modalFile"><i class="fas fa-image"
-                                                                                  ></i></button>
+                                ></i></button>
 
                             <!-- Modal -->
                             <div class="modal fade" id="modalFile" data-backdrop="static" tabindex="-1" role="dialog"
@@ -89,50 +89,97 @@
             {% for index, post in posts %}
                 <div class="col-6 mx-auto">
                     <div class="post-preview">
-
-                        <div class="card my-2">
-                            <div class="card-body">
-                                <a href="{{ url.get(links[index]) }}">
-                                    <h4 class="post-title">
-                                        {{ post.title }}
-                                    </h4>
-                                </a>
-                                <p class="post-subtitle">
-                                    {{ post.content }}
-                                </p>
-                                <small class="post-meta">Posted by
-                                    <a href="#">{{ post.fullname }}</a>
-                                    <small>{{ post.created_at }}</small></small>
-                                <div class="container">
-                                    {% if files[index].path is defined %}
+                        {% if files[index].path is defined %}
+                            <div class="card my-2" style="max-width: 475px">
+                                <div class="row no-gutters">
+                                    <div class="col-md-4">
                                         <img src="{{ static_url(files[index].path) }}"
-                                             alt="{{ files[index].filename }}" class="w-50 h-50"/>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <button type="button" class="btn btn-sm"
-                                        id="replyButton" data-toggle="collapse"
-                                        data-target="#replyForm_{{ post.id }}">Reply
-                                </button>
-
-                                <div class="collapse" id="replyForm_{{ post.id }}">
-                                    <div class="card card-body">
-                                        <form action="post/{{ post.id }}/replyPost" method="post">
-                                            <div class="form-group">
-                                                <label for="replyContent">Reply Something</label>
-                                                <textarea maxlength="120" name="content" id="replyContent"
-                                                          placeholder="What's on your mind?"></textarea>
-                                            </div>
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-secondary"
-                                            ><i class="fas fa-reply"></i> Reply
+                                             alt="{{ files[index].file_name }}" class="card-img"
+                                             />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <a href="{{ url.get(links[index]) }}">
+                                                <h4 class="post-title">
+                                                    {{ post.title }}
+                                                </h4>
+                                            </a>
+                                            <p class="post-subtitle">
+                                                {{ post.content }}
+                                            </p>
+                                            <small class="post-meta">Posted by
+                                                <a href="#">{{ post.fullname }}</a>
+                                                <small>{{ post.created_at }}</small></small>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" class="btn btn-sm"
+                                                    id="replyButton" data-toggle="collapse"
+                                                    data-target="#replyForm_{{ post.id }}">Reply
                                             </button>
-                                        </form>
+
+                                            <div class="collapse" id="replyForm_{{ post.id }}">
+                                                <div class="card card-body" style="max-width: 475px">
+                                                    <form action="post/{{ post.id }}/replyPost" method="post">
+                                                        <div class="form-group">
+                                                            <label for="replyContent">Reply Something</label>
+                                                            <textarea maxlength="120" name="content"
+                                                                      id="replyContent"
+                                                                      placeholder="What's on your mind?"
+                                                            class="w-75"></textarea>
+                                                        </div>
+                                                        <button type="submit"
+                                                                class="btn btn-sm btn-secondary"
+                                                        ><i class="fas fa-reply"></i> Reply
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+
+                        {% else %}
+                            <div class="card my-2">
+                                <div class="card-body">
+                                    <a href="{{ url.get(links[index]) }}">
+                                        <h4 class="post-title">
+                                            {{ post.title }}
+                                        </h4>
+                                    </a>
+                                    <p class="post-subtitle">
+                                        {{ post.content }}
+                                    </p>
+                                    <small class="post-meta">Posted by
+                                        <a href="#">{{ post.fullname }}</a>
+                                        <small>{{ post.created_at }}</small></small>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="button" class="btn btn-sm"
+                                            id="replyButton" data-toggle="collapse"
+                                            data-target="#replyForm_{{ post.id }}">Reply
+                                    </button>
+
+                                    <div class="collapse" id="replyForm_{{ post.id }}">
+                                        <div class="card card-body">
+                                            <form action="post/{{ post.id }}/replyPost" method="post">
+                                                <div class="form-group">
+                                                    <label for="replyContent">Reply Something</label>
+                                                    <textarea maxlength="120" name="content"
+                                                              id="replyContent"
+                                                              placeholder="What's on your mind?"></textarea>
+                                                </div>
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-secondary"
+                                                ><i class="fas fa-reply"></i> Reply
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
 
                     </div>
 

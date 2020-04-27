@@ -102,7 +102,7 @@
 
                                             <div class="collapse" id="replyForm_{{ reply.RepId }}">
                                                 <div class="card card-body">
-                                                    <form action="post/{{ post.id }}/replyPost/{{ reply.RepId }}"
+                                                    <form action="{{ url("/post/"~post.id~"/replyPost/"~reply.RepId) }}"
                                                           method="post">
                                                         <div class="form-group">
                                                             <label for="replyContent">Reply Something</label>

@@ -229,6 +229,46 @@ class PostController extends Controller
         return $this->response->redirect('/home');
     }
 
+    public function replyOfReplyAction()
+    {
+        $request = $this->request;
+
+        $postId = $this->dispatcher->getParam('postId');
+        $replyId = $this->dispatcher->getParam('replyId');
+
+        if ($request->isPost() && isset($postId) && isset($replyId)) {
+
+            $content = $request->getPost('content', 'string');
+            $userId = $this->session->get('user_id');
+
+            $this->db->begin();
+            try {
+                $replyModel = new ReplyPost();
+                $replyModel->id = Uuid::uuid4()->toString();
+                $replyModel->content = $content;
+                $replyModel->user_id = $userId;
+                $replyModel->post_id = $replyId;
+                $replyModel->created_at = (new \DateTime())->format('Y-m-d H:i:s');
+
+                if (!$replyModel->save()) {
+                    $this->db->rollback();
+                    throw new Failed("Failed to store reply of reply");
+                }
+
+                //TODO: Reply of reply
+                $this->db->commit();
+                $this->flash->success("Reply Success");
+
+            } catch (Failed $exception) {
+                $this->flash->error($exception->getMessage());
+                return $this->response->redirect('/post/viewPost/' . $postId);
+            }
+
+        }
+
+        return $this->response->redirect('/post/viewPost/' . $postId);
+    }
+
     private function initializeFileManager(File $file, string $post_id, string $user_id)
     {
         $fileModel = new FileManager();
