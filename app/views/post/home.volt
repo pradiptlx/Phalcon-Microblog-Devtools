@@ -44,9 +44,9 @@
                             </button>
                             <small class="ml-3" style="font-size: small">Max. 120 Characters.</small>
                             <button id="buttonFile" type="button"
-                                    class="btn btn-primary btn-sm float-right"><i class="fas fa-image"
-                                                                                  data-toggle="modal"
-                                                                                  data-target="#modalFile"></i></button>
+                                    class="btn btn-primary btn-sm float-right" data-toggle="modal"
+                                    data-target="#modalFile"><i class="fas fa-image"
+                                                                                  ></i></button>
 
                             <!-- Modal -->
                             <div class="modal fade" id="modalFile" data-backdrop="static" tabindex="-1" role="dialog"
@@ -105,7 +105,8 @@
                                     <small>{{ post.created_at }}</small></small>
                                 <div class="container">
                                     {% if files[index].path is defined %}
-                                        <img src="{{ static_url(files[index].path) }}" class="w-50 h-50"/>
+                                        <img src="{{ static_url(files[index].path) }}"
+                                             alt="{{ files[index].filename }}" class="w-50 h-50"/>
                                     {% endif %}
                                 </div>
                             </div>
@@ -125,7 +126,7 @@
                                             </div>
                                             <button type="submit"
                                                     class="btn btn-sm btn-secondary"
-                                            >Reply
+                                            ><i class="fas fa-reply"></i> Reply
                                             </button>
                                         </form>
                                     </div>

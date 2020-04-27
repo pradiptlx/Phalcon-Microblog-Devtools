@@ -76,6 +76,13 @@ $postRouter->add(
         'params' => 1
     ]
 )->setName('reply-post');
+$postRouter->add(
+    '/:idPost/replyPost/:idReply',
+    [
+        'action' => 'reply',
+        'params' => [1, 2]
+    ]
+)->setName('reply-reply');
 
 /**
  * File

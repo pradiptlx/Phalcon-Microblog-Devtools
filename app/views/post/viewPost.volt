@@ -42,14 +42,54 @@
             </div>
 
 
-            {% if replies is defined %}
-                <div class="row">
-                    <div class="col-6 mx-auto">
-                        <div class="card">
-                            <div class="card-header">Reply</div>
-                            <div class="card-body">
+            <div class="row">
+                <div class="col-6 mx-auto">
+                    <div class="card">
+                        <div class="card-header">
+                            Reply
+                            <button type="button" class="btn btn-secondary btn-sm float-right"
+                                    data-toggle="modal" data-target="#newReply">
+                                <i class="fas fa-plus-square"></i> Create
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="newReply" data-backdrop="static" tabindex="-1"
+                                 role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    {% set postId = post.id %}
+                                    {% set uri = "/post/"~postId~"/replyPost" %}
+                                    <form action="{{ url(uri) }}"
+                                          method="post">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">New Reply</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <textarea maxlength="120" name="content" id="replyContent"
+                                                              placeholder="What's on your mind?"></textarea>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% if replies is defined %}
                                 {% for reply in replies %}
-                                    <div class="card">
+                                    <div class="card my-3">
                                         <div class="card-body">
                                             {{ reply.RepContent }}
                                         </div>
@@ -57,12 +97,13 @@
                                             <small> By: {{ reply.RepFullname }} at {{ reply.RepCreatedAt }}</small>
                                             <button type="button" class="float-right btn btn-sm"
                                                     id="replyButton" data-toggle="collapse"
-                                                    data-target="#replyForm">Reply
+                                                    data-target="#replyForm_{{ reply.RepId }}"><i class="fas fa-reply"></i> Reply
                                             </button>
 
-                                            <div class="collapse" id="replyForm">
+                                            <div class="collapse" id="replyForm_{{ reply.RepId }}">
                                                 <div class="card card-body">
-                                                    <form action="post/replyPost/{{ post.id }}" method="post">
+                                                    <form action="post/{{ post.id }}/replyPost/{{ reply.RepId }}"
+                                                          method="post">
                                                         <div class="form-group">
                                                             <label for="replyContent">Reply Something</label>
                                                             <textarea maxlength="120" name="content" id="replyContent"
@@ -70,7 +111,7 @@
                                                         </div>
                                                         <button type="submit"
                                                                 class="btn btn-sm btn-secondary"
-                                                        >Reply
+                                                        ><i class="fas fa-paper-plane"></i> Reply
                                                         </button>
                                                     </form>
                                                 </div>
@@ -78,11 +119,14 @@
                                         </div>
                                     </div>
                                 {% endfor %}
-                            </div>
+                            {% else %}
+                                <div id="noReplyFound">No reply found</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-            {% endif %}
+            </div>
+
         </div>
     </article>
 
