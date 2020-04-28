@@ -101,10 +101,10 @@ $di->set('flash', function () {
     $flash = new Flash($escaper);
 //    $flash->setImplicitFlush(false);
     $flash->setCssClasses([
-        'error' => 'alert alert-danger',
-        'success' => 'alert alert-success',
-        'notice' => 'alert alert-info',
-        'warning' => 'alert alert-warning'
+        'error' => 'alert alert-danger alert-dismissible fade show',
+        'success' => 'alert alert-success alert-dismissible fade show',
+        'notice' => 'alert alert-info alert-dismissible fade show',
+        'warning' => 'alert alert-warning alert-dismissible fade show'
     ]);
 
     return $flash;
@@ -117,10 +117,10 @@ $di->set('flashSession', function (){
     $escaper = new Escaper();
     $flash = new FlashSession($escaper);
     $flash->setCssClasses([
-        'error' => 'alert alert-danger',
-        'success' => 'alert alert-success',
-        'notice' => 'alert alert-info',
-        'warning' => 'alert alert-warning'
+        'error' => 'alert alert-danger alert-dismissible fade show',
+        'success' => 'alert alert-success alert-dismissible fade show',
+        'notice' => 'alert alert-info alert-dismissible fade show',
+        'warning' => 'alert alert-warning alert-dismissible fade show'
     ]);
 
     return $flash;

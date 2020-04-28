@@ -54,6 +54,13 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 <script defer src="{{ static_url('/js/all.min.js') }}"></script> <!--load all styles -->
+<script>
+    $(document).ready(()=>{
+        $('.alert').click(function () {
+            $('.alert').alert('close')
+        });
+    });
+</script>
 {% block js %}
 {% endblock %}
 </body>
