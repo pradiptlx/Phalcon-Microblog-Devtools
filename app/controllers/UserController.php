@@ -101,7 +101,7 @@ class UserController extends Controller
             ]);
 
             if ($user->create()) {
-                $this->flash->success("Registration success");
+                $this->flashSession->success("Registration success");
 
                 return $this->response->redirect('/home');
             }
@@ -117,6 +117,7 @@ class UserController extends Controller
         $headerCollection = $this->assets->collection('headerCss');
         $headerCollection->addCss('/css/login/main.css');
         $headerCollection->addCss('/css/login/index.css');
+        $this->view->setVar('title', 'Login Page');
 
         $request = $this->request;
 
@@ -126,20 +127,18 @@ class UserController extends Controller
 
             $user = User::findByUsername($username)->getFirst();
 
-            if ($this->checkingPassword($password, $user->password)) {
-                $this->flash->success("Login Success");
+            if (isset($user) && $this->checkingPassword($password, $user->password)) {
+                $this->flashSession->success("Login Success");
                 $this->session->set('user_id', $user->id);
 
-                $this->response->redirect('/home');
+                return $this->response->redirect('/home');
             } else {
-                $this->flash->error("Login Failed");
+                $this->flashSession->error("Login Failed");
 
-                return $this->view->pick('user/login');
+                return $this->response->redirect('user/login');
             }
         } else if ($request->isGet()) {
-            $this->view->title = "Login page";
 
-//            $this->view->start()->render('user','login');
             $this->view->pick("user/login");
 //            $this->view->render('user', 'login');
         }
@@ -155,7 +154,7 @@ class UserController extends Controller
             $this->session->remove('user_id');
         }
 
-        $this->flash->success("Successfully logout");
+        $this->flashSession->success("Successfully logout");
         return $this->response->redirect('/user/login');
     }
 
@@ -175,10 +174,10 @@ class UserController extends Controller
                 $user->updated_at = (new \DateTime())->format('Y-m-d H:i:s');
                 $user->update();
 
-                $this->flash->success("Success change password");
+                $this->flashSession->success("Success change password");
                 return $this->response->redirect('/user/dashboard');
             } else {
-                $this->flash->error("Can't change password");
+                $this->flashSession->error("Can't change password");
 
                 return $this->response->redirect('/home');
             }
@@ -197,23 +196,23 @@ class UserController extends Controller
             $newPass = $request->getPost('newPassword', 'string');
 
             $user = User::findFirstById($this->session->get('user_id'));
-            if (isset($username)){
+            if (isset($username)) {
                 $user->username = $username;
             }
-            if(isset($fullname)){
+            if (isset($fullname)) {
                 $user->fullname = $fullname;
             }
-            if(isset($email)){
+            if (isset($email)) {
                 $user->email = $email;
             }
-            if(isset($newPass) && isset($oldPass) && $this->checkingPassword($oldPass, $user->password)){
+            if (isset($newPass) && isset($oldPass) && $this->checkingPassword($oldPass, $user->password)) {
                 $hashed = password_hash($newPass, PASSWORD_BCRYPT);
                 $user->password = (string)$hashed;
             }
 
             $user->updated_at = (new \DateTime())->format('Y-m-d H:i:s');
             $user->update();
-            $this->flash->success("Success change password");
+            $this->flashSession->success("Success change password");
             return $this->response->redirect('/user/dashboard');
         }
 

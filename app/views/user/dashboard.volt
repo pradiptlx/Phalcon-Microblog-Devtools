@@ -85,14 +85,14 @@
                     <!-- SIDEBAR MENU -->
                     <div class="profile-usermenu">
                         <ul class="nav flex-column">
-                            <li class="nav-item">
+                            <li class="nav-item active" id="liHome">
                                 <a href="#" class="nav-link" id="homeLink">
                                     <i class="fas fa-home"></i>
                                     Overview
                                 </a>
                             </li>
 
-                            <li class="nav-item">
+                            <li class="nav-item" id="liAcc">
                                 <a href="#account" class="nav-link" id="accountSettingsLink">
                                     <i class="fas fa-user-circle"></i>
                                     Account Settings
@@ -113,6 +113,13 @@
                                 <a href="{{ url('/post/viewPost/'~post.id) }}">
                                     {{ post.title }}
                                 </a>
+
+                                <form class="float-right" action="{{ url('/post/'~post.id~'/deletePost') }}"
+                                      method="post">
+                                    <input type="hidden" name="postId" value="{{ post.id }}">
+                                    <button type="submit" class="btn btn-sm btn-danger float-right"><i
+                                                class="fas fa-trash"></i></button>
+                                </form>
                             </div>
                             <div class="card-body">
                                 {{ post.content }}
@@ -181,11 +188,15 @@
             accSet.click(function () {
                 $('#home').attr('hidden', true);
                 $('#account').attr('hidden', false);
+                $('#liAcc').attr('class', 'active');
+                $('#liHome').removeAttr('class', 'active');
             });
 
             homeSet.click(function () {
                 $('#home').attr('hidden', false);
                 $('#account').attr('hidden', true);
+                $('#liHome').attr('class', 'active');
+                $('#liAcc').removeAttr('class', 'active');
             });
         });
     </script>

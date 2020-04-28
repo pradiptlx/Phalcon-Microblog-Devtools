@@ -16,16 +16,23 @@ use Ramsey\Uuid\Uuid;
 
 class PostController extends Controller
 {
+    private string $getToken;
+    private string $getTokenKey;
 
     public function initialize()
     {
         if (!$this->session->has('user_id')) {
-            $this->flash->error("You must login.");
+            $this->flashSession->error("You must login.");
             $this->response->redirect('/user/login');
         }
 
         $postCssCollection = $this->assets->collection('postCss');
         $postCssCollection->addCss('/css/main.css');
+
+        $this->getTokenKey = $this->security->getTokenKey();
+        $this->getToken = $this->security->getToken();
+        $this->view->setVar('getToken', $this->getToken);
+        $this->view->setVar('getTokenKey', $this->getTokenKey);
     }
 
     public function indexAction()
@@ -45,6 +52,7 @@ class PostController extends Controller
 
         $files = [];
         $urls = [];
+        $repliesCounter = [];
 
         foreach ($posts as $post) {
             $urls[] = $this->url->get([
@@ -65,6 +73,7 @@ class PostController extends Controller
             $repliesCounter[] = ReplyPost::findByPostId($post->id)->count();
         }
 
+        $this->view->setVar('totalPost', $posts->count());
         $this->view->setVar('repliesCounter', $repliesCounter);
         $this->view->setVar('files', $files);
         $this->view->setVar('posts', $posts);
@@ -101,22 +110,25 @@ class PostController extends Controller
                 }
 
                 $postModel->user_id = $user_id;
+                $postModel->repost_counter = 0;
+                $postModel->share_counter = 0;
+                $postModel->reply_counter = 0;
                 $postModel->created_at = (new \DateTime('now'))->format('Y-m-d H:i:s');
                 $postModel->updated_at = (new \DateTime('now'))->format('Y-m-d H:i:s');
 
                 if (!$postModel->save()) {
                     $transaction->rollback('Can not save post');
-                    $this->flash->error('Can not save post');
-                    $this->response->redirect('/home');
+                    $this->flashSession->error('Can not save post');
+                    throw new Failed("Error create post");
                 } else
                     $transaction->commit();
 
-                $this->flash->success('Create post success');
-                $this->response->redirect('/home');
+                $this->flashSession->success('Create post success');
+                return $this->response->redirect('/home');
 
             } catch (Failed $exception) {
-                $this->flash->error($exception->getMessage());
-
+                $this->flashSession->error($exception->getMessage());
+                return $this->response->redirect('/home');
             }
 
         }
@@ -132,7 +144,7 @@ class PostController extends Controller
         if (isset($idPost)) {
             if ($request->isGet()) {
                 $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, 
-                p.repost_counter, p.share_counter, p.reply_counter, u.fullname
+                p.repost_counter, p.share_counter, p.reply_counter, u.fullname, p.user_id
                 FROM Dex\Microblog\Models\Post p
                 JOIN Dex\Microblog\Models\User u on p.user_id = u.id
                 WHERE p.id = :id:";
@@ -153,9 +165,18 @@ class PostController extends Controller
                 $replies = $modelManager->execute([
                     'id' => $idPost
                 ]);
-//                var_dump($replies);
-//                die();
 
+                $filesQuery = "SELECT f.*
+                        FROM Dex\Microblog\Models\FileManager f
+                        WHERE f.post_id=:post_id:";
+                $createQuery = new Query($filesQuery, $this->di);
+
+                $files[] = $createQuery->execute([
+                    'post_id' => $idPost
+                ])->getFirst();
+
+                $this->view->setVar('user_id', $this->session->get('user_id'));
+                $this->view->setVar('files', $files);
                 $this->view->setVar('replies', $replies);
                 $this->view->setVar('title', $post->title);
                 $this->view->setVar('post', $post);
@@ -181,7 +202,7 @@ class PostController extends Controller
 
                 if (!$replyModel->save()) {
                     $this->db->rollback();
-                    $this->flash->error("Failed to reply");
+                    $this->flashSession->error("Failed to reply");
                     return $this->response->redirect('/post/viewPost/' . $idPost);
                 }
 
@@ -225,14 +246,14 @@ class PostController extends Controller
                 //TODO: Fix model event not work
                 if (!$replyModel->save()) {
                     $this->db->rollback();
-                    $this->flash->error("Error Reply");
+                    $this->flashSession->error("Error Reply");
                     return $this->response->redirect('/home');
                 }
                 $this->db->commit();
             }
 
         } else {
-            $this->flash->error("Doesn't Support GET Method");
+            $this->flashSession->error("Doesn't Support GET Method");
         }
 
         return $this->response->redirect('/home');
@@ -266,16 +287,38 @@ class PostController extends Controller
 
                 //TODO: Reply of reply
                 $this->db->commit();
-                $this->flash->success("Reply Success");
+                $this->flashSession->success("Reply Success");
 
             } catch (Failed $exception) {
-                $this->flash->error($exception->getMessage());
+                $this->flashSession->error($exception->getMessage());
                 return $this->response->redirect('/post/viewPost/' . $postId);
             }
 
         }
 
         return $this->response->redirect('/post/viewPost/' . $postId);
+    }
+
+    public function deletePostAction()
+    {
+        $request = $this->request;
+
+        if ($request->isPost()) {
+            $postId = $request->getPost('postId', 'string');
+
+            $postModel = Post::findFirstById($postId);
+
+            if ($postModel->delete()) {
+                $this->flashSession->success("Delete post " . $postModel->title . " Success");
+
+
+            } else {
+                $this->flashSession->error("Can't delete post " . $postModel->title);
+            }
+
+        }
+
+        return $this->response->redirect('/home');
     }
 
     private function initializeFileManager(File $file, string $post_id, string $user_id)
@@ -302,13 +345,13 @@ class PostController extends Controller
             $fileModel->post_id = $post_id;
             if (!$fileModel->save()) {
                 $trx->rollback('Can not save file on file manager');
+                throw new Failed("Failed Store Files");
             } else {
                 $trx->commit();
 
-
             }
         } catch (Failed $exception) {
-            $this->flash->error($exception->getMessage());
+            $this->flashSession->error($exception->getMessage());
 
         }
     }

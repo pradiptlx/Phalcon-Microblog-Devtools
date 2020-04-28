@@ -7,6 +7,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+    {{ flashSession.output() }}
     <header class="masthead"
             style="background-image: url('{{ static_url('/img/georgiana-sparks-1KkjeJgtOxE-unsplash.jpg') }}')">
         <div class="overlay"></div>
@@ -23,7 +24,6 @@
     </header>
 
     <div class="container">
-        {{ flash.output() }}
         <div class="row mx-2 my-3">
             <div class="col-6 mx-auto ">
                 <div class="card bg-dark text-white">
@@ -120,7 +120,8 @@
 
                                             {% if repliesCounter[index] != 0 %}
                                                 <button type="button" class="btn float-right btn-secondary btn-sm">
-                                                    Replies <span class="badge badge-light">{{ repliesCounter[index] }}</span>
+                                                    Replies <span
+                                                            class="badge badge-light">{{ repliesCounter[index] }}</span>
                                                     <span class="sr-only">replies</span>
                                                 </button>
                                             {% endif %}
@@ -179,6 +180,7 @@
                                     <div class="collapse" id="replyForm_{{ post.id }}">
                                         <div class="card card-body">
                                             <form action="post/{{ post.id }}/replyPost" method="post">
+                                                <input type="hidden" name="{{ getTokenKey }}" value="{{ getToken }}">
                                                 <div class="form-group">
                                                     <label for="replyContent">Reply Something</label>
                                                     <textarea maxlength="120" name="content"
@@ -201,11 +203,17 @@
 
                 </div>
             {% endfor %}
+
             <!-- Pager -->
-            <div class="clearfix m-3">
+            {#<div class="clearfix m-3">
                 <a class="btn btn-primary float-right" href="#">Older Posts &rarr;</a>
-            </div>
+            </div>#}
         </div>
+        {% if totalPost is defined %}
+            <button disabled type="button" class="btn btn-primary clearfix m-3">
+                Total Post <span class="badge badge-light">{{ totalPost }}</span>
+            </button>
+        {% endif %}
         {#        </div>#}
     </div>
 

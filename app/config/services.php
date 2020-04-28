@@ -5,6 +5,7 @@ use Phalcon\Escaper;
 use Phalcon\Events\Event;
 use Phalcon\Events\Manager;
 use Phalcon\Flash\Direct as Flash;
+use Phalcon\Flash\Session as FlashSession;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Php as PhpEngine;
@@ -98,7 +99,7 @@ $di->setShared('modelsMetadata', function () {
 $di->set('flash', function () {
     $escaper = new Escaper();
     $flash = new Flash($escaper);
-    $flash->setImplicitFlush(false);
+//    $flash->setImplicitFlush(false);
     $flash->setCssClasses([
         'error' => 'alert alert-danger',
         'success' => 'alert alert-success',
@@ -108,6 +109,25 @@ $di->set('flash', function () {
 
     return $flash;
 });
+
+/**
+ * Change Flash session css Classes
+ */
+$di->set('flashSession', function (){
+    $escaper = new Escaper();
+    $flash = new FlashSession($escaper);
+    $flash->setCssClasses([
+        'error' => 'alert alert-danger',
+        'success' => 'alert alert-success',
+        'notice' => 'alert alert-info',
+        'warning' => 'alert alert-warning'
+    ]);
+
+    return $flash;
+});
+
+//var_dump($di->get('flashSession'));
+//die();
 
 /**
  * Start the session the first time some component request the session service

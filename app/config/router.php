@@ -70,10 +70,10 @@ $postRouter->add(
     ]
 )->setName('edit-post');
 $postRouter->add(
-    '/deletePost/:params',
+    '/{postId}/deletePost',
     [
         'action' => 'deletePost',
-        'params' => 1
+        'postId' => 1
     ]
 )->setName('delete-post');
 $postRouter->add(

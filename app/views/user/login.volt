@@ -9,7 +9,7 @@
 
 {% block content %}
 
-    {{ flash.output() }}
+    {{ flashSession.output() }}
 
     <div class="limiter">
         <div class="container-login100">
@@ -29,12 +29,12 @@
                     </div>
 
                     <div class="container-login100-form-btn">
-                        <button class="login100-form-btn" type="submit">
+                        <button class="login100-form-btn my-2" type="submit">
                             Sign in
                         </button>
                     </div>
 
-                    <div class="w-full text-center p-t-27 p-b-239">
+                    {#<div class="w-full text-center p-t-27 p-b-239">
 						<span class="txt1">
 							Forgot
 						</span>
@@ -42,10 +42,10 @@
                         <a href="{{ url('user/forgot') }}" class="txt2">
                             User name / password?
                         </a>
-                    </div>
+                    </div>#}
 
-                    <div class="w-full text-center">
-                        <a href="{{ url('user/register')}}" class="txt3 mr-0">
+                    <div class="container-login100-form-btn">
+                        <a href="{{ url('user/register')}}" class="login100-form-btn my-3 mx-0">
                             Sign Up
                         </a>
                     </div>

@@ -7,25 +7,59 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    {% if files is defined %}
-        <header class="masthead" style="background-image: url("{{ static_url(file.path) }}")">
+    {% if files[0] is defined %}
+<header class="masthead" style="background-image: url({{ static_url(files[0].path) }})">
     {% else %}
-        <header class="masthead">
-    {% endif %}
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                <div class="post-heading">
-                    <h1>{{ post.title }}</h1>
-                    {#                        <h2 class="subheading">Problems look mighty small from 150 miles up</h2>#}
-                    <span class="meta">Posted by
+    <header class="masthead">
+        {% endif %}
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    {% if user_id === post.user_id %}
+                        <button type="button"
+                                data-toggle="modal" data-target="#deletePost"
+                                class="btn btn-danger float-right">
+                            Delete Post
+                        </button>
+                    {% endif %}
+                    <div class="post-heading">
+                        <h1>{{ post.title }}</h1>
+                        {#                        <h2 class="subheading">Problems look mighty small from 150 miles up</h2>#}
+                        <span class="meta">Posted by
               <a href="#">{{ post.fullname }}</a>
               on {{ post.created_at }}</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <!-- Modal -->
+        <div class="modal fade" id="deletePost" data-backdrop="static" tabindex="-1"
+             role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <form action="{{ url('/post/'~post.id~'/deletePost') }}" method="post">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Are you sure</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="postId" value="{{ post.id }}">
+                            This action is irrevertible.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="submit" class="btn btn-danger">Sure</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </header>
 
 
@@ -97,7 +131,8 @@
                                             <small> By: {{ reply.RepFullname }} at {{ reply.RepCreatedAt }}</small>
                                             <button type="button" class="float-right btn btn-sm"
                                                     id="replyButton" data-toggle="collapse"
-                                                    data-target="#replyForm_{{ reply.RepId }}"><i class="fas fa-reply"></i> Reply
+                                                    data-target="#replyForm_{{ reply.RepId }}"><i
+                                                        class="fas fa-reply"></i> Reply
                                             </button>
 
                                             <div class="collapse" id="replyForm_{{ reply.RepId }}">
@@ -131,7 +166,4 @@
     </article>
 
 
-
-
-
-{% endblock %}
+    {% endblock %}
