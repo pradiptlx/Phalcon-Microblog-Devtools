@@ -23,7 +23,7 @@ class PostController extends Controller
     {
         if (!$this->session->has('user_id')) {
             $this->flashSession->error("You must login.");
-            $this->response->redirect('/user/login');
+            return $this->response->redirect('/user/login');
         }
 
         $postCssCollection = $this->assets->collection('postCss');
@@ -48,7 +48,6 @@ class PostController extends Controller
         $createQuery = new Query($query, $this->di);
 
         $posts = $createQuery->execute();
-//        $posts = Post::find();
 
         $files = [];
         $urls = [];

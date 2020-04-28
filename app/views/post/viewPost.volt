@@ -7,6 +7,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+{{ flashSession.output() }}
     {% if files[0] is defined %}
 <header class="masthead" style="background-image: url({{ static_url(files[0].path) }})">
     {% else %}

@@ -59,21 +59,22 @@
 {% endblock %}
 
 {% block js %}
-    <script src="/vendor/select2/select2.min.js"></script>
+    <script src="{{ static_url('/vendor/select2/select2.min.js') }}"></script>
     <script>
         $(".selection-2").select2({
             minimumResultsForSearch: 20,
             dropdownParent: $('#dropDownSelect1')
         });
     </script>
-    <script src="/vendor/animsition/js/animsition.min.js"></script>
-    <script src="/vendor/select2/select2.min.js"></script>
+    <script src="{{ static_url('/vendor/animsition/js/animsition.min.js') }}"></script>
+    <script src="{{ static_url('/vendor/select2/select2.min.js') }}"></script>
     <!--===============================================================================================-->
-    <script src="/vendor/daterangepicker/moment.min.js"></script>
-    <script src="/vendor/daterangepicker/daterangepicker.js"></script>
+    <script src="{{ static_url('/vendor/daterangepicker/moment.min.js') }}"></script>
+    <script src="{{ static_url('/vendor/daterangepicker/daterangepicker.js') }}"></script>
     <!--===============================================================================================-->
-    <script src="/vendor/countdowntime/countdowntime.js"></script>
+    <script src="{{ static_url('/vendor/countdowntime/countdowntime.js') }}"></script>
     <!--===============================================================================================-->
-    <script src="/js/login/main.js"></script>
+    <script src="{{ static_url('/js/login/main.js') }}"></script>
+
 
 {% endblock %}

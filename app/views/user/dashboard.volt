@@ -7,7 +7,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-
+    {{ flashSession.output() }}
     <div class="container">
         <div class="row profile">
             <div class="col-md-3">
