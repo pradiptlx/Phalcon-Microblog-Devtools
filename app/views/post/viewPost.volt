@@ -49,7 +49,7 @@
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="postId" value="{{ post.id }}">
-                            This action is irrevertible.
+                            This action is irreversible.
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">

@@ -29,7 +29,7 @@ $userRouter->add(
     ]
 );
 $userRouter->add(
-    '/:action',
+    '/:action/:params',
     [
         'action' => 1,
         'params' => 2

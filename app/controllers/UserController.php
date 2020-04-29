@@ -28,6 +28,15 @@ class UserController extends Controller
 
     public function dashboardAction()
     {
+        if (!$this->session->has('user_id')) {
+            $this->flashSession->error('You must login first.');
+            $this->session->set('last_error_url', $this->router->getControllerName() . '/' . $this->router->getActionName());
+            $this->dispatcher->forward([
+                'controller' => 'user',
+                'action' => 'login'
+            ]);
+        }
+
         $dashboardCollection = $this->assets->collection('dashboardCss');
         $dashboardCollection->addCss('/css/profile.css');
 
@@ -131,18 +140,21 @@ class UserController extends Controller
                 $this->flashSession->success("Login Success");
                 $this->session->set('user_id', $user->id);
 
+                if ($this->session->has('last_error_url')) {
+                    return $this->response->redirect($this->session->get('last_error_url'));
+                }
                 return $this->response->redirect('/home');
             } else {
                 $this->flashSession->error("Login Failed");
 
-                return $this->response->redirect('user/login');
+                return $this->response->redirect('/user/login');
             }
         } else if ($request->isGet()) {
 
             $this->view->pick("user/login");
 //            $this->view->render('user', 'login');
         }
-        new \Exception("Test");
+
     }
 
     public function logoutAction()
@@ -216,6 +228,7 @@ class UserController extends Controller
             return $this->response->redirect('/user/dashboard');
         }
 
+        $this->flashSession->error("Doesn't Support GET method");
         return $this->response->redirect('/user/dashboard');
     }
 

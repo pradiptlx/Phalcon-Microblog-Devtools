@@ -37,7 +37,7 @@ class PostController extends Controller
 
     public function indexAction()
     {
-        $this->view->title = "Home";
+        $this->view->setVar('title', 'Home');
 
         //TODO: JOIN USER
         $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, p.repost_counter, 
