@@ -77,8 +77,18 @@
                                 </div>
                             </div>
                         {% else %}
-                            <button type="button" class="btn btn-success btn-sm">Follow</button>
-                            <button type="button" class="btn btn-danger btn-sm">Message</button>
+                            <a tabindex="0" role="button" class="btn btn-success btn-sm text-white" data-toggle="popover"
+                                    title="Feature not ready yet."
+                                    data-placement="top" data-trigger="focus"
+                                    data-content="I'm sorry, the feature is not ready yet because no table db implemented.">
+                                Follow
+                            </a>
+                            <a tabindex="0" role="button" class="btn btn-danger btn-sm text-white" data-toggle="popover"
+                                    title="Feature not ready yet."
+                                    data-placement="top" data-trigger="focus"
+                                    data-content="I'm sorry, the feature is not ready yet because no table db implemented.">
+                                Message
+                            </a>
                         {% endif %}
                     </div>
                     <!-- END SIDEBAR BUTTONS -->
@@ -92,12 +102,14 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item" id="liAcc">
-                                <a href="#account" class="nav-link" id="accountSettingsLink">
-                                    <i class="fas fa-user-circle"></i>
-                                    Account Settings
-                                </a>
-                            </li>
+                            {% if user_id is defined and user_id == user.id %}
+                                <li class="nav-item" id="liAcc">
+                                    <a href="#account" class="nav-link" id="accountSettingsLink">
+                                        <i class="fas fa-user-circle"></i>
+                                        Account Settings
+                                    </a>
+                                </li>
+                            {% endif %}
 
                         </ul>
                     </div>
@@ -114,12 +126,14 @@
                                     {{ post.title }}
                                 </a>
 
-                                <form class="float-right" action="{{ url('/post/'~post.id~'/deletePost') }}"
-                                      method="post">
-                                    <input type="hidden" name="postId" value="{{ post.id }}">
-                                    <button type="submit" class="btn btn-sm btn-danger float-right"><i
-                                                class="fas fa-trash"></i></button>
-                                </form>
+                                {% if user_id is defined and post.user_id == user_id %}
+                                    <form class="float-right" action="{{ url('/post/'~post.id~'/deletePost') }}"
+                                          method="post">
+                                        <input type="hidden" name="postId" value="{{ post.id }}">
+                                        <button type="submit" class="btn btn-sm btn-danger float-right"><i
+                                                    class="fas fa-trash"></i></button>
+                                    </form>
+                                {% endif %}
                             </div>
                             <div class="card-body">
                                 {{ post.content }}

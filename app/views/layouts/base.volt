@@ -56,6 +56,14 @@
 <script defer src="{{ static_url('/js/all.min.js') }}"></script> <!--load all styles -->
 <script>
     $(document).ready(()=>{
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        });
+
+        $('.popover-dismiss').popover({
+            trigger: 'focus'
+        });
+
         $('.alert').click(function () {
             $('.alert').alert('close')
         });

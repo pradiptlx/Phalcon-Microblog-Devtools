@@ -24,6 +24,9 @@ class UserController extends Controller
         }
 
 
+        if ($this->session->has('user_id')) {
+            $this->view->setVar('user_id', $this->session->get('user_id'));
+        }
     }
 
     public function dashboardAction()
@@ -110,6 +113,7 @@ class UserController extends Controller
             ]);
 
             if ($user->create()) {
+                $this->session->set('user_id', $user->id);
                 $this->flashSession->success("Registration success");
 
                 return $this->response->redirect('/home');
@@ -180,7 +184,7 @@ class UserController extends Controller
 
             $user = User::findFirstById($this->session->get('user_id'));
 
-            if ($this->checkingPassword($oldPass, $user->password)) {
+            if (isset($user) && $this->checkingPassword($oldPass, $user->password)) {
                 $hashed = password_hash($newPass, PASSWORD_BCRYPT);
                 $user->password = (string)$hashed;
                 $user->updated_at = (new \DateTime())->format('Y-m-d H:i:s');
@@ -194,6 +198,9 @@ class UserController extends Controller
                 return $this->response->redirect('/home');
             }
         }
+
+        $this->flashSession->error("Doesn't Support GET Method");
+        return $this->response->redirect('/user/dashboard');
     }
 
     public function accountSettingsAction()
@@ -231,6 +238,31 @@ class UserController extends Controller
         $this->flashSession->error("Doesn't Support GET method");
         return $this->response->redirect('/user/dashboard');
     }
+
+    public function findUserAction()
+    {
+        $usernameParam = $this->router->getParams()[0];
+
+        $dashboardCollection = $this->assets->collection('dashboardCss');
+        $dashboardCollection->addCss('/css/profile.css');
+
+        if (isset($usernameParam)) {
+            $userModel = User::findFirstByUsername($usernameParam);
+
+            if (isset($usernameParam)) {
+
+                $userPosts = Post::findByUserId($userModel->id);
+
+                $this->view->setVar('posts', $userPosts);
+                $this->view->setVar('self', false);
+                $this->view->setVar('user', $userModel);
+                $this->view->setVar('title', 'Dashboard');
+
+                $this->view->pick('user/dashboard');
+            }
+        }
+    }
+
 
     public function forgotPasswordAction()
     {
