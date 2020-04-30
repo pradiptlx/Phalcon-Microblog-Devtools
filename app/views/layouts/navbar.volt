@@ -15,7 +15,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {% if user is defined %}
+                    {% if username is defined %}
                         {{ username }}
                     {% else %}
                         Users
@@ -23,7 +23,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href={{ url('user/dashboard') }}>Dashboard</a>
-                    {% if user is defined %}
+                    {% if user_id is defined %}
                         <a class="dropdown-item" href="{{ url('user/logout') }}">Logout</a>
                     {% endif %}
                 </div>

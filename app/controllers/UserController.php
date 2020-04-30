@@ -5,12 +5,7 @@ namespace Dex\Microblog\Controller;
 
 use Dex\Microblog\Models\Post;
 use Dex\Microblog\Models\Role;
-use Dex\Microblog\Models\RoleId;
-use Dex\Microblog\Models\RoleModel;
 use Dex\Microblog\Models\User;
-use Dex\Microblog\Models\UserId;
-use Dex\Microblog\Models\UserModel;
-use Phalcon\Cli\Dispatcher;
 use Phalcon\Mvc\Controller;
 use Ramsey\Uuid\Uuid;
 
@@ -24,7 +19,8 @@ class UserController extends Controller
         }
 
 
-        if ($this->session->has('user_id')) {
+        if ($this->session->has('user_id') && $this->session->has('username')) {
+            $this->view->setVar('username', $this->session->get('username'));
             $this->view->setVar('user_id', $this->session->get('user_id'));
         }
     }
@@ -143,6 +139,7 @@ class UserController extends Controller
             if (isset($user) && $this->checkingPassword($password, $user->password)) {
                 $this->flashSession->success("Login Success");
                 $this->session->set('user_id', $user->id);
+                $this->session->set('username', $user->username);
 
                 if ($this->session->has('last_error_url')) {
                     return $this->response->redirect($this->session->get('last_error_url'));

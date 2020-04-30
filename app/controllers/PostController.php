@@ -26,6 +26,11 @@ class PostController extends Controller
             return $this->response->redirect('/user/login');
         }
 
+        if ($this->session->has('user_id') && $this->session->has('username')) {
+            $this->view->setVar('username', $this->session->get('username'));
+            $this->view->setVar('user_id', $this->session->get('user_id'));
+        }
+
         $postCssCollection = $this->assets->collection('postCss');
         $postCssCollection->addCss('/css/main.css');
 
