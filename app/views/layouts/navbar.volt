@@ -9,18 +9,23 @@
             <li class="nav-item active">
                 <a class="nav-link" href="{{ url('home') }}">Home </a>
             </li>
-{#            <li class="nav-item">#}
-{#                <a class="nav-link" href="/user/dashboard">Profiles</a>#}
-{#            </li>#}
+            {#            <li class="nav-item">#}
+            {#                <a class="nav-link" href="/user/dashboard">Profiles</a>#}
+            {#            </li>#}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Users
-{#                    TODO: Create dynamic fullname#}
+                    {% if user is defined %}
+                        {{ username }}
+                    {% else %}
+                        Users
+                    {% endif %}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href={{ url('user/dashboard') }}>Dashboard</a>
-                    <a class="dropdown-item" href="{{ url('user/logout') }}">Logout</a>
+                    {% if user is defined %}
+                        <a class="dropdown-item" href="{{ url('user/logout') }}">Logout</a>
+                    {% endif %}
                 </div>
             </li>
         </ul>
