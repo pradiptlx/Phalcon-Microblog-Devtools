@@ -70,9 +70,11 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                                            <button id="closeFileBtn" type="button" class="btn btn-secondary">Cancel
                                             </button>
-                                            <button type="button" class="btn btn-primary">Save changes</button>
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Save
+                                                changes
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -234,7 +236,13 @@
                     reader.readAsDataURL(file);
                 }
                 console.log(file);
+
             })
+            $('#closeFileBtn').click(function () {
+                $('#fileContent').val(null);
+                $('#fileImg').removeAttr('src');
+                $('#modalFile').modal('hide');
+            });
         });
 
     </script>
