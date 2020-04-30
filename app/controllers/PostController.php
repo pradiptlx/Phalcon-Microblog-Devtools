@@ -304,14 +304,32 @@ class PostController extends Controller
 
         if ($request->isPost()) {
             $postId = $request->getPost('postId', 'string');
+            $this->db->begin();
 
             $postModel = Post::findFirstById($postId);
+            $fileModel = FileManager::findByPostId($postId);
 
-            if ($postModel->delete()) {
+            $paths = [];
+            foreach ($fileModel as $file) {
+                $paths[] = $file->path;
+            }
+
+            if ($postModel->delete() && $fileModel->delete()) {
+                foreach ($paths as $path) {
+                    if (strpos($path, "/") === 0) {
+                        $path = substr_replace($path, '', 0, 1);
+                    }
+                    if (!unlink($path)) {
+                        $this->db->rollback();
+                        $this->flashSession->error("Can't delete post " . $postModel->title);
+                        return $this->response->redirect('/home');
+                    }
+                }
+
+                $this->db->commit();
                 $this->flashSession->success("Delete post " . $postModel->title . " Success");
-
-
             } else {
+                $this->db->rollback();
                 $this->flashSession->error("Can't delete post " . $postModel->title);
             }
 
@@ -336,7 +354,7 @@ class PostController extends Controller
                 $file->moveTo('files/' . $path);
             } catch (\Phalcon\Url\Exception $exception) {
                 var_dump($exception->getMessage());
-                die();
+                throw new Failed('Failed save file. Missing Folder');
             }
 
             $fileModel->file_name = $file->getName();
