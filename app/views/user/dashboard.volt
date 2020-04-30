@@ -31,9 +31,9 @@
                     <!-- SIDEBAR BUTTONS -->
                     <div class="profile-userbuttons">
                         {% if self === true %}
-                            <button type="button" href="{{ url('/user/logout') }}" class="btn btn-success btn-sm">
+                            <a role="button" href="{{ url('/user/logout') }}" class="btn btn-success btn-sm">
                                 Logout
-                            </button>
+                            </a>
                             <button type="button" class="btn btn-danger btn-sm"
                                     data-toggle="modal" data-target="#resetPassModal">Change Password
                             </button>
