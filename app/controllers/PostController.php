@@ -42,9 +42,9 @@ class PostController extends Controller
 
     public function indexAction()
     {
+        $this->session->set('last_url', $this->router->getControllerName() . '/' . $this->router->getActionName());
         $this->view->setVar('title', 'Home');
 
-        //TODO: JOIN USER
         $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, p.repost_counter, 
                     p.share_counter, p.reply_counter, u.fullname
                     FROM Dex\Microblog\Models\Post p
@@ -141,6 +141,7 @@ class PostController extends Controller
 
     public function viewPostAction()
     {
+        $this->session->set('last_url', $this->router->getControllerName() . '/' . $this->router->getActionName() . '/' . $this->router->getParams()[0]);
         $request = $this->request;
 
         $idPost = $this->router->getParams()[0];
@@ -164,7 +165,7 @@ class PostController extends Controller
                  r.user_id as RepUser, r.created_at as RepCreatedAt, u.fullname as RepFullname
                 FROM Dex\Microblog\Models\ReplyPost r
                 JOIN Dex\Microblog\Models\User u on r.user_id = u.id
-                WHERE r.post_id = :id:";
+                WHERE r.post_id = :id: ORDER BY r.created_at";
                 $modelManager = $this->modelsManager->createQuery($replyQuery);
                 $replies = $modelManager->execute([
                     'id' => $idPost
@@ -247,10 +248,11 @@ class PostController extends Controller
                 $replyModel->created_at = (new \DateTime())->format('Y-m-d H:i:s');
                 $replyModel->updated_at = (new \DateTime())->format('Y-m-d H:i:s');
 
-                //TODO: Fix model event not work
                 if (!$replyModel->save()) {
                     $this->db->rollback();
                     $this->flashSession->error("Error Reply");
+                    if ($this->session->has('last_url'))
+                        return $this->response->redirect($this->session->get('last_url'));
                     return $this->response->redirect('/home');
                 }
                 $this->db->commit();
@@ -260,6 +262,8 @@ class PostController extends Controller
             $this->flashSession->error("Doesn't Support GET Method");
         }
 
+        if ($this->session->has('last_url'))
+            return $this->response->redirect($this->session->get('last_url'));
         return $this->response->redirect('/home');
     }
 
@@ -289,7 +293,6 @@ class PostController extends Controller
                     throw new Failed("Failed to store reply of reply");
                 }
 
-                //TODO: Reply of reply
                 $this->db->commit();
                 $this->flashSession->success("Reply Success");
 
@@ -313,13 +316,14 @@ class PostController extends Controller
 
             $postModel = Post::findFirstById($postId);
             $fileModel = FileManager::findByPostId($postId);
+            $replyModel = ReplyPost::findByPostId($postId);
 
             $paths = [];
             foreach ($fileModel as $file) {
                 $paths[] = $file->path;
             }
 
-            if ($postModel->delete() && $fileModel->delete()) {
+            if ($postModel->delete() && $fileModel->delete() && $replyModel->delete()) {
                 foreach ($paths as $path) {
                     if (strpos($path, "/") === 0) {
                         $path = substr_replace($path, '', 0, 1);
@@ -338,6 +342,12 @@ class PostController extends Controller
                 $this->flashSession->error("Can't delete post " . $postModel->title);
             }
 
+        }
+
+        if ($this->session->has('last_url')) {
+            $lastUrl = $this->session->get('last_url');
+            if ($lastUrl == 'user/dashboard')
+                return $this->response->redirect($lastUrl);
         }
 
         return $this->response->redirect('/home');

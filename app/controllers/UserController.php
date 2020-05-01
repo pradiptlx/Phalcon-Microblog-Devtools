@@ -27,9 +27,11 @@ class UserController extends Controller
 
     public function dashboardAction()
     {
+        $this->session->set('last_url', $this->router->getControllerName() . '/' . $this->router->getActionName());
+
         if (!$this->session->has('user_id')) {
             $this->flashSession->error('You must login first.');
-            $this->session->set('last_error_url', $this->router->getControllerName() . '/' . $this->router->getActionName());
+
             $this->dispatcher->forward([
                 'controller' => 'user',
                 'action' => 'login'
@@ -117,7 +119,6 @@ class UserController extends Controller
 
         }
 
-        // TODO: Redirect to view
         return $this->view->pick('user/register');
     }
 
@@ -141,8 +142,8 @@ class UserController extends Controller
                 $this->session->set('user_id', $user->id);
                 $this->session->set('username', $user->username);
 
-                if ($this->session->has('last_error_url')) {
-                    return $this->response->redirect($this->session->get('last_error_url'));
+                if ($this->session->has('last_url')) {
+                    return $this->response->redirect($this->session->get('last_url'));
                 }
                 return $this->response->redirect('/home');
             } else {
@@ -211,24 +212,31 @@ class UserController extends Controller
             $oldPass = $request->getPost('oldPassword', 'string');
             $newPass = $request->getPost('newPassword', 'string');
 
+            $this->db->begin();
             $user = User::findFirstById($this->session->get('user_id'));
-            if (isset($username)) {
+            if (!empty($username)) {
                 $user->username = $username;
             }
-            if (isset($fullname)) {
+            if (!empty($fullname)) {
                 $user->fullname = $fullname;
             }
-            if (isset($email)) {
+            if (!empty($email)) {
                 $user->email = $email;
             }
-            if (isset($newPass) && isset($oldPass) && $this->checkingPassword($oldPass, $user->password)) {
+            if (!empty($newPass) && !empty($oldPass) && $this->checkingPassword($oldPass, $user->password)) {
                 $hashed = password_hash($newPass, PASSWORD_BCRYPT);
                 $user->password = (string)$hashed;
             }
 
             $user->updated_at = (new \DateTime())->format('Y-m-d H:i:s');
-            $user->update();
-            $this->flashSession->success("Success change password");
+            if ($user->update()) {
+                $this->db->commit();
+                $this->flashSession->success("Success change profile");
+            } else {
+                $this->db->rollback();
+                $this->flashSession->error("Can't Change Profile");
+            }
+
             return $this->response->redirect('/user/dashboard');
         }
 
