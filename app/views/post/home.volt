@@ -110,7 +110,7 @@
                                                 {{ post.content }}
                                             </p>
                                             <small class="post-meta">Posted by
-                                                <a href="#">{{ post.fullname }}</a>
+                                                <a href="{{ url('user/findUser/'~post.username) }}">{{ post.fullname }}</a>
                                                 <small>{{ post.created_at }}</small></small>
                                         </div>
                                         <div class="card-footer">
@@ -162,7 +162,7 @@
                                         {{ post.content }}
                                     </p>
                                     <small class="post-meta">Posted by
-                                        <a href="{{ url('user/findUser/'~username) }}">{{ post.fullname }}</a>
+                                        <a href="{{ url('user/findUser/'~post.username) }}">{{ post.fullname }}</a>
                                         <small>{{ post.created_at }}</small></small>
                                 </div>
                                 <div class="card-footer">
@@ -181,7 +181,7 @@
 
                                     <div class="collapse" id="replyForm_{{ post.id }}">
                                         <div class="card card-body">
-                                            <form action="post/{{ post.id }}/replyPost" method="post">
+                                            <form action="{{ url('post/'~post.id~'/replyPost') }}" method="post">
                                                 <input type="hidden" name="{{ getTokenKey }}" value="{{ getToken }}">
                                                 <div class="form-group">
                                                     <label for="replyContent">Reply Something</label>

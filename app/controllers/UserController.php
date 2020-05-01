@@ -76,6 +76,13 @@ class UserController extends Controller
             $password = $request->getPost('password', 'string');
             $rolename = $request->getPost('rolename', 'string') ?: 'admin';
 
+            $usernameSearch = User::findFirstByUsername($username);
+
+            if ($usernameSearch->username != null || $usernameSearch->email == $email) {
+                $this->flashSession->error('Username has already taken');
+                return $this->response->redirect('user/login');
+            }
+
             $user = new User();
 
             $roleQuery = "SELECT id, role_name, permissions
@@ -168,6 +175,12 @@ class UserController extends Controller
         if ($this->session->has('user_id')) {
             $this->session->remove('user_id');
         }
+
+        if ($this->session->has('username'))
+            $this->session->remove('username');
+
+        if ($this->session->has('last_url'))
+            $this->session->remove('last_url');
 
         $this->flashSession->success("Successfully logout");
         return $this->response->redirect('/user/login');

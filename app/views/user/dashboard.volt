@@ -102,7 +102,7 @@
                                 </a>
                             </li>
 
-                            {% if user_id is defined and user_id == user.id %}
+                            {% if (user_id is defined and user_id|upper == user.id) %}
                                 <li class="nav-item" id="liAcc">
                                     <a href="#account" class="nav-link" id="accountSettingsLink">
                                         <i class="fas fa-user-circle"></i>

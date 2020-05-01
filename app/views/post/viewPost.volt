@@ -28,7 +28,7 @@
                         <h1>{{ post.title }}</h1>
                         {#                        <h2 class="subheading">Problems look mighty small from 150 miles up</h2>#}
                         <span class="meta">Posted by
-              <a href="#">{{ post.fullname }}</a>
+              <a href="{{ url('user/findUser/'~post.username) }}">{{ post.fullname }}</a>
               on {{ post.created_at }}</span>
                     </div>
                 </div>

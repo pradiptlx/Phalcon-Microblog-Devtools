@@ -42,11 +42,10 @@ class PostController extends Controller
 
     public function indexAction()
     {
-        $this->session->set('last_url', $this->router->getControllerName() . '/' . $this->router->getActionName());
         $this->view->setVar('title', 'Home');
 
         $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, p.repost_counter, 
-                    p.share_counter, p.reply_counter, u.fullname
+                    p.share_counter, p.reply_counter, u.fullname, u.username
                     FROM Dex\Microblog\Models\Post p
                     JOIN Dex\Microblog\Models\User u on p.user_id = u.id";
 
@@ -149,7 +148,7 @@ class PostController extends Controller
         if (isset($idPost)) {
             if ($request->isGet()) {
                 $query = "SELECT p.id, p.title, p.content, p.created_at, p.updated_at, 
-                p.repost_counter, p.share_counter, p.reply_counter, u.fullname, p.user_id
+                p.repost_counter, p.share_counter, p.reply_counter, u.fullname, p.user_id, u.username
                 FROM Dex\Microblog\Models\Post p
                 JOIN Dex\Microblog\Models\User u on p.user_id = u.id
                 WHERE p.id = :id:";
