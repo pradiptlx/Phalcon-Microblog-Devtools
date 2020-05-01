@@ -112,6 +112,7 @@ class UserController extends Controller
 
             if ($user->create()) {
                 $this->session->set('user_id', $user->id);
+                $this->session->set('username', $user->username);
                 $this->flashSession->success("Registration success");
 
                 return $this->response->redirect('/home');

@@ -162,7 +162,7 @@
                                         {{ post.content }}
                                     </p>
                                     <small class="post-meta">Posted by
-                                        <a href="#">{{ post.fullname }}</a>
+                                        <a href="{{ url('user/findUser/'~username) }}">{{ post.fullname }}</a>
                                         <small>{{ post.created_at }}</small></small>
                                 </div>
                                 <div class="card-footer">
