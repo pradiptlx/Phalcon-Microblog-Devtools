@@ -261,8 +261,6 @@ class PostController extends Controller
             $this->flashSession->error("Doesn't Support GET Method");
         }
 
-        if ($this->session->has('last_url'))
-            return $this->response->redirect($this->session->get('last_url'));
         return $this->response->redirect('/home');
     }
 
